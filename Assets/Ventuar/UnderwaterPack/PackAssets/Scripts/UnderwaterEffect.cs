@@ -1,10 +1,8 @@
-﻿using System;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
-#if PP_V2_PRESENT
-using UnityEngine.Rendering.PostProcessing;
-#endif
+using UnityEditor;
 
 namespace LowPolyUnderwaterPack
 {
@@ -19,19 +17,17 @@ namespace LowPolyUnderwaterPack
 
         #region Effect Settings
 
-#if PP_V2_PRESENT
-        [Tooltip("Post processing profile for when the camera is above water.")]
-        [SerializeField] private PostProcessProfile surfaceProfile = null;
         [Tooltip("Post processing profile for when the camera is underwater.")]
-        [SerializeField] private PostProcessProfile underwaterProfile = null;
+        [SerializeField] private VolumeProfile underwaterProfile = null;
+        [Tooltip("Post processing profile for when the camera is above water.")]
+        [SerializeField] private VolumeProfile surfaceProfile = null;
         [Tooltip("The color of the underwater fog.")]
-#endif
         [SerializeField] private Color fogColor = Color.blue;
         [Tooltip("Toggle whether to change the tint color of the skybox to the color of the fog when underwater to better blend into the environment.")]
         [SerializeField] private bool modifySkyboxTint = false;
 
-        [Tooltip("Water refraction effect material, used to create a refraction image effect.")]
-        [SerializeField] private Material refractionMaterial = null;
+        [Tooltip("Water refraction renderer feature, used to create a refraction image effect.")]
+        public ScriptableRendererFeature refractionRendererFeature;
 
         #endregion
 
@@ -48,18 +44,11 @@ namespace LowPolyUnderwaterPack
         private Color skyColor;
 
         private WaterMesh water;
-#if PP_V2_PRESENT
-        private PostProcessVolume vol;
-#endif
+        private Volume vol;
         private Camera cam;
 
         private string tintPropName;
         private Vector3 waterMeshPoint = Vector3.zero;
-
-        private RaycastHit[] overHits, underHits;
-        private int overHitsLength, underHitsLength;
-        WaterMesh currentWater = null;
-        Vector3 offsetPos;
 
         #region Boids Test Scene Variables
         
@@ -74,9 +63,7 @@ namespace LowPolyUnderwaterPack
 
         private void Awake() 
         {
-#if PP_V2_PRESENT
-            vol = GetComponent<PostProcessVolume>();
-#endif
+            vol = FindObjectOfType<Volume>();
             cam = GetComponent<Camera>();
         }
 
@@ -85,12 +72,10 @@ namespace LowPolyUnderwaterPack
             // Ensure camera generates a depth texture
             cam.depthTextureMode = DepthTextureMode.Depth;
 
-            overHits = new RaycastHit[15];
-            underHits = new RaycastHit[15];
-
-            // Not in boids test room
-            if (SceneManager.GetActiveScene().name != "Boids Test")
+            // If not in boids test room
+            if (SceneManager.GetActiveScene().name != "BoidsTest")
             {
+                water = FindObjectOfType<WaterMesh>();
                 skybox = RenderSettings.skybox;
                 if (RenderSettings.skybox.HasProperty("_Tint"))
                     tintPropName = "_Tint";
@@ -105,7 +90,7 @@ namespace LowPolyUnderwaterPack
             
             // Only find the boids test room if in the boids test scene
             inBoidsRoomScene = true;
-            boidsRoom = GameObject.Find("Boid Test Room");
+            boidsRoom = GameObject.Find("BoidTestRoom");
         }
 
         private void OnValidate()
@@ -116,6 +101,9 @@ namespace LowPolyUnderwaterPack
             // Change underwater fog and background color in real time
             RenderSettings.fogColor = fogColor;
             cam.backgroundColor = fogColor;
+            
+            if (refractionRendererFeature != null)
+                refractionRendererFeature.SetActive(false);
         }
 
         private void LateUpdate()
@@ -128,62 +116,19 @@ namespace LowPolyUnderwaterPack
                     return;
 
                 // Camera is underwater if it is inside the walls of the test room
-                ApplyUnderwaterEffects(boidsRoom.GetComponent<MeshCollider>().bounds.Contains(transform.position));
+                bool insideBoidsRoom = boidsRoom.GetComponent<MeshCollider>().bounds.Contains(transform.position);
+                ApplyUnderwaterEffects(insideBoidsRoom);
 
                 return;
             }
 
-            // Determining if object is over/under water or not and getting a reference to the water if it is
-            overHitsLength = Physics.RaycastNonAlloc(transform.position + (Vector3.up * 10), -Vector3.up, overHits, float.MaxValue);
-            underHitsLength = Physics.RaycastNonAlloc(transform.position - (Vector3.up * 10), Vector3.up, underHits, float.MaxValue);
-
-            currentWater = null;
-
-            for (int i = 0; i < overHitsLength || i < underHitsLength; i++)
-            {
-                // Check if over water
-                if (i < overHitsLength)
-                {
-                    if(overHits[i].transform.TryGetComponent(out WaterMesh wm))
-                    {
-                        currentWater = wm;
-                        break;
-                    }           
-                }
-
-                // Check if under water
-                if (i < underHitsLength)
-                {
-                    if(underHits[i].transform.TryGetComponent(out WaterMesh wm))
-                    {
-                        currentWater = wm;
-                        break;
-                    }
-                }
-            }
-
-            // Assign the current water reference to "water" variable. Will assign null if no water above or under the camera. 
-            water = currentWater; 
-
-            // Water detection position offsetted for a optimally smooth transition between above and below water
-            offsetPos = transform.position + waterDetectionOffset;
-            if (water != null) waterMeshPoint = water.GetWaterPoint(offsetPos);
+            // Water detection position can be offsetted for a optimally smooth transition between above and below water
+            Vector3 pos = transform.position + waterDetectionOffset;
+            if (water != null)
+                waterMeshPoint = water.GetWaterPoint(pos);
 
             // If the point on the water is above our position, we are underwater and should be applying underwater effects
-            ApplyUnderwaterEffects((waterMeshPoint != Vector3.zero) ? waterMeshPoint.y > offsetPos.y : false);
-        }
-
-        // THIS WILL NOT WORK IN URP
-        private void OnRenderImage(RenderTexture source, RenderTexture destination)
-        {
-            // Apply refraction material if underwater
-            if (isUnderwater && refractionMaterial != null)
-            {
-                Graphics.Blit(source, destination, refractionMaterial);
-                return;
-            }
-
-            Graphics.Blit(source, destination);
+            ApplyUnderwaterEffects((waterMeshPoint != Vector3.zero) ? waterMeshPoint.y > pos.y : false);
         }
 
         private void OnDrawGizmos()
@@ -207,9 +152,8 @@ namespace LowPolyUnderwaterPack
             isUnderwater = underwater;
             RenderSettings.fog = underwater;
             RenderSettings.skybox.SetColor("_Tint", ((!underwater && modifySkyboxTint) ? skyColor : fogColor));
-#if PP_V2_PRESENT
             vol.profile = ((underwater) ? underwaterProfile : surfaceProfile);
-#endif
+            refractionRendererFeature.SetActive(underwater);
         }
     }
 
@@ -220,7 +164,7 @@ namespace LowPolyUnderwaterPack
     [CustomEditor(typeof(UnderwaterEffect), true), CanEditMultipleObjects, System.Serializable]
     public class UnderwaterEffect_Editor : Editor
     {
-        private SerializedProperty waterDetectionOffset, surfaceProfile, underwaterProfile, fogColor, modifySkyboxTint, refractionMaterial;
+        private SerializedProperty waterDetectionOffset, surfaceProfile, underwaterProfile, fogColor, modifySkyboxTint, refractionRendererFeature;
 
         private bool effectFoldout = true;
 
@@ -235,7 +179,7 @@ namespace LowPolyUnderwaterPack
             fogColor = serializedObject.FindProperty("fogColor");
             modifySkyboxTint = serializedObject.FindProperty("modifySkyboxTint");
 
-            refractionMaterial = serializedObject.FindProperty("refractionMaterial");
+            refractionRendererFeature = serializedObject.FindProperty("refractionRendererFeature");
 
             #endregion
         }
@@ -261,16 +205,14 @@ namespace LowPolyUnderwaterPack
             {
                 EditorGUI.indentLevel++;
 
-#if PP_V2_PRESENT
                 EditorGUILayout.PropertyField(surfaceProfile);
                 EditorGUILayout.PropertyField(underwaterProfile);
-#endif
                 EditorGUILayout.PropertyField(fogColor);
                 EditorGUILayout.PropertyField(modifySkyboxTint);
 
                 EditorGUILayout.Space(10);
 
-                EditorGUILayout.PropertyField(refractionMaterial);
+                EditorGUILayout.PropertyField(refractionRendererFeature);
 
                 EditorGUI.indentLevel--;
             }
