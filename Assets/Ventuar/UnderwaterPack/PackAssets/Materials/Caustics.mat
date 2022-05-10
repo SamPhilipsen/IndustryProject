@@ -141,7 +141,7 @@ Material:
     - _CausticsIntensity: 1.5
     - _CausticsShallowDistance: 50
     - _CausticsSpeed: 1
-    - _CausticsStartLevel: -40
+    - _CausticsStartLevel: 35.8
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
