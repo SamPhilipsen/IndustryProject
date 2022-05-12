@@ -24,7 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 27170
+  controlID: 6681
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_UseMipMap: 0
   m_VSyncEnabled: 0
   m_Gizmos: 0
-  m_Stats: 1
+  m_Stats: 0
   m_SelectedSizes: 03000000000000000000000000000000000000000000000000000000000000000000000000000000
   m_ZoomArea:
     m_HRangeLocked: 0
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 27171
+  controlID: 6682
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 27172
+  controlID: 6683
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -187,8 +187,8 @@ MonoBehaviour:
     y: 0
     width: 831.2
     height: 442.4
-  m_MinSize: {x: 101, y: 121}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 2}
   m_Panes:
   - {fileID: 2}
@@ -243,8 +243,8 @@ MonoBehaviour:
     y: 0
     width: 323.99994
     height: 442.4
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 8}
   m_Panes:
   - {fileID: 8}
@@ -332,7 +332,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 27139
+  controlID: 6609
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -352,8 +352,8 @@ MonoBehaviour:
     y: 0
     width: 832
     height: 280.4
-  m_MinSize: {x: 231, y: 271}
-  m_MaxSize: {x: 10001, y: 10021}
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
   m_ActualView: {fileID: 11}
   m_Panes:
   - {fileID: 11}
@@ -403,22 +403,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Ventuar/UnderwaterPack/Prefabs/Corals
+    - Assets
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Ventuar/UnderwaterPack/Prefabs/Corals
+  - Assets
   m_LastFoldersGridSize: 16
   m_LastProjectPath: D:\Unity Projects\IndustryProject
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 176.6}
-    m_SelectedIDs: 26700000
-    m_LastClickedID: 28710
-    m_ExpandedIDs: 000000008a6e00008c6e00008e6e0000906e0000926e0000946e00002870000000ca9a3b
+    scrollPos: {x: 0, y: 79}
+    m_SelectedIDs: 52740000
+    m_LastClickedID: 29778
+    m_ExpandedIDs: 00000000527400005474000056740000587400005a7400005c7400005e7400006074000062740000647400006674000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -446,7 +446,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000008a6e00008c6e00008e6e0000906e0000926e0000946e00002870000000ca9a3b
+    m_ExpandedIDs: 00000000527400005474000056740000587400005a7400005c7400005e7400006074000062740000647400006674000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -471,8 +471,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs: defaffff
+    m_LastClickedInstanceID: -1314
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000083b0000c83b0000184e000000000000
     m_RenameOverlay:
@@ -498,7 +498,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 75.600006}
+    m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 16
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 254
@@ -533,7 +533,7 @@ MonoBehaviour:
     m_SaveData: []
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 26782
+  m_LastSelectedObjectID: 27824
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -565,7 +565,7 @@ MonoBehaviour:
     m_SaveData: []
   m_ViewTransforms:
     m_KeySerializationHelper:
-    - {fileID: -4363490990615874846, guid: 996e11a39d6391b4b8f17aa50da9772f, type: 2}
+    - {fileID: 6348676575649901360, guid: 93ba7f219c4122047af7810f74dca134, type: 2}
     m_ValueSerializationHelper:
     - e00: 1
       e01: 0
@@ -584,10 +584,10 @@ MonoBehaviour:
       e32: 0
       e33: 1
   m_PreviewAnimator: {fileID: 0}
-  m_AnimatorController: {fileID: 9100000, guid: 996e11a39d6391b4b8f17aa50da9772f,
+  m_AnimatorController: {fileID: 9100000, guid: 93ba7f219c4122047af7810f74dca134,
     type: 2}
   m_BreadCrumbs:
-  - m_Target: {fileID: -4363490990615874846, guid: 996e11a39d6391b4b8f17aa50da9772f,
+  - m_Target: {fileID: 6348676575649901360, guid: 93ba7f219c4122047af7810f74dca134,
       type: 2}
     m_ScrollPosition: {x: 0, y: 0}
   stateMachineGraph: {fileID: 0}
@@ -663,7 +663,7 @@ MonoBehaviour:
     m_CachedPref: 151
     m_ControlHash: 1412526313
     m_PrefName: Preview_InspectorPreview
-  m_LastInspectedObjectInstanceID: -1
+  m_LastInspectedObjectInstanceID: -1314
   m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
@@ -718,8 +718,8 @@ MonoBehaviour:
     y: 0
     width: 380.80005
     height: 722.8
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -762,7 +762,7 @@ MonoBehaviour:
     m_CachedPref: 151
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
-  m_LastInspectedObjectInstanceID: -1
+  m_LastInspectedObjectInstanceID: -1314
   m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
