@@ -6,6 +6,7 @@ public class Hoop : MonoBehaviour, IObjective
 {
     [SerializeField] GameObject player;
     [SerializeField] ParticleSystem particles;
+    [SerializeField] Material completeMaterial;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -18,11 +19,18 @@ public class Hoop : MonoBehaviour, IObjective
     public void Complete()
     {
         Debug.Log(gameObject.name + " completed");
+        GetComponent<MeshRenderer>().material = completeMaterial; 
+        SpawnParticles();
         //particles.Play();
     }
 
     public void Disable()
     {
         gameObject.SetActive(false);
+    }
+
+    public void SpawnParticles()
+    {
+        Instantiate(particles, gameObject.transform.parent);
     }
 }

@@ -10,6 +10,11 @@ public interface IObjective
     void Complete();
 
     /// <summary>
+    /// Spawn confetti particles at object position
+    /// </summary>
+    void SpawnParticles();
+
+    /// <summary>
     /// Can be used in animations or triggers to disable the objective
     /// </summary>
     void Disable();

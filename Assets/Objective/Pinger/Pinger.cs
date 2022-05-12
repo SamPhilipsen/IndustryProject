@@ -6,6 +6,8 @@ public class Pinger : MonoBehaviour, IObjective
 {
     [SerializeField] GameObject player;
     [SerializeField] GameObject pingerObject;
+    [SerializeField] ParticleSystem confettiParticles;
+    [SerializeField] ParticleSystem pingerParticles;
     [SerializeField] Animator animator;
 
     bool completed = false;
@@ -29,6 +31,7 @@ public class Pinger : MonoBehaviour, IObjective
     {
         pingerObject.SetActive(true);
         completed = true;
+        SpawnParticles();
     }
 
     public void Disable()
@@ -38,4 +41,11 @@ public class Pinger : MonoBehaviour, IObjective
         pingerObject.SetActive(false);
         completed = false;
     }
+
+    public void SpawnParticles()
+    {
+        Instantiate(confettiParticles, gameObject.transform);
+        Instantiate(pingerParticles, gameObject.transform);
+    }
 }
+    
