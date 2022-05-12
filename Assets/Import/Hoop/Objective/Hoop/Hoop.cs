@@ -9,7 +9,6 @@ public class Hoop : MonoBehaviour, IObjective
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collision");
         if (other.gameObject.tag == "Player")
         {
             Complete();
@@ -18,7 +17,6 @@ public class Hoop : MonoBehaviour, IObjective
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision");
         if (collision.gameObject.tag == "Player")
         {
             Complete();
