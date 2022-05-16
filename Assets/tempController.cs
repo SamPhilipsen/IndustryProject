@@ -23,7 +23,7 @@ public class tempController : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(0, turn.x, 0);
 
-        Camera.transform.RotateAround(transform.position, Vector3.forward, Quaternion.Euler(-turn.y, 0, 0).eulerAngles.y);
+        //Camera.transform.RotateAround(transform.position, Vector3.forward, Quaternion.Euler(-turn.y, 0, 0).eulerAngles.y);
 
         Vector3 movement = Vector3.zero;
         if (Input.GetKey(KeyCode.W))
