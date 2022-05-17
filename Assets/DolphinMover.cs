@@ -40,6 +40,10 @@ public class DolphinMover : MonoBehaviour
 
             cart.m_Speed = -20f;
         }
+        else if (Input.GetKey(KeyCode.Space))
+        {
+            cart.m_Speed = 0f;
+        }
         else
         {
             cart.m_Speed = 15f;
