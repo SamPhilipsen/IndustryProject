@@ -12,7 +12,7 @@ public class Offset : MonoBehaviour
     [SerializeField]
     GameObject communicationManager;
 
-    [SerializeField] float offsetValue = 0.3f;
+    [SerializeField] float offsetValue = 0.05f;
     [SerializeField] float maxOffset = 25f;
 
     private float potXValue;
@@ -28,7 +28,7 @@ public class Offset : MonoBehaviour
         baseSpeed = trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed;
     }
     
-    void Update()
+    void FixedUpdate()
     {
         GetValues();
 
