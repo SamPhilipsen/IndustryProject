@@ -13,6 +13,11 @@ public class Hoop : MonoBehaviour, IObjective
         if (other.Equals(player.GetComponent<Collider>()))
         {
             Complete();
+            Triggerable triggerable = GetComponentInParent<Triggerable>();
+            if (triggerable != null)
+            {
+                triggerable.Trigger();
+            }
         }
     }
 
