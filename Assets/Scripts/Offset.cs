@@ -30,14 +30,14 @@ public class Offset : MonoBehaviour
     
     void FixedUpdate()
     {
-        GetValues();
+        //GetValues();
 
-        Movement();
+        //Movement();
 
-        //if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
-        //{
-        //    Offsets();
-        //}
+        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
+        {
+            Offsets();
+        }
     }
     
     //if Arduino is not implemented
