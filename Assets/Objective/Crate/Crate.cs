@@ -13,6 +13,11 @@ public class Crate : MonoBehaviour, IObjective
         if (other.Equals(player.GetComponent<Collider>()))
         {
             Complete();
+            Triggerable triggerable = GetComponentInParent<Triggerable>();
+            if (triggerable != null)
+            {
+                triggerable.Trigger();
+            }
         }
     }
 
@@ -24,7 +29,7 @@ public class Crate : MonoBehaviour, IObjective
 
     public void Disable()
     {
-        Debug.Log("Disabled");
+        ///Debug.Log("Disabled");
         gameObject.SetActive(false);
     }
 

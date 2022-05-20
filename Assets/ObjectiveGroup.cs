@@ -8,104 +8,130 @@ using UnityEngine.Events;
 public class ObjectiveInfo
 {
     public GameObject gameObject;
-    public bool isTriggered;
+    public bool isCompleted;
+}
+
+[System.Serializable]
+public class TriggerInfo
+{
+    public bool mustBeConsecutiveToTrigger;
+    public int[] triggerIndexes;
+    public UnityEvent triggerEvents;
+}
+
+[System.Serializable]
+public class Group
+{
+    public string name;
+    public List<ObjectiveInfo> objectives;
+    [Header("Triggers")]
+    public bool isEnabled;
+    public List<TriggerInfo> triggers;
 }
 
 public class ObjectiveGroup : MonoBehaviour
 {
-    [Space]
-    public List<ObjectiveInfo> objectives;
-    [Header("Trigger Settings")]
-    public bool hasTrigger;
-    public int[] triggerIndexes;    
-    [Space]
-    public UnityEvent triggerEvents;
-    [Tooltip("")]
-    public bool mustBeConsecutive;
+    public List<Group> objectiveGroups;
 
     public void ExecuteTrigger(GameObject obj)
     {
-        if (!hasTrigger)
+        // Checking if the gameObject that is triggered is part of an objective group
+        List<Group> groupsObjectiveIsPartOf = new List<Group>();
+        foreach (Group group in objectiveGroups)
         {
-            return;
-        }
-
-        if (objectives.Count <= 0)
-        {
-            return;
-        }
-
-        ObjectiveInfo match = null;
-        foreach(ObjectiveInfo info in objectives)
-        {
-            if (obj.Equals(info.gameObject))
+            foreach (ObjectiveInfo oInfo in group.objectives)
             {
-                match = info;
+                if (oInfo.gameObject.Equals(obj))
+                {
+                    groupsObjectiveIsPartOf.Add(group);
+                    oInfo.isCompleted = true;
+                }
+            }
+            
+        }
+
+        // Guard clause for triggers and adding all groups with triggers to a list
+        bool hasTrigger = false;
+        List<Group> groupsWithTriggers = new List<Group>();
+        foreach (Group group in groupsObjectiveIsPartOf)
+        {
+            if (group.isEnabled)
+            {
+                hasTrigger = true;
+                groupsWithTriggers.Add(group);
             }
         }
-        Debug.Log(match);
-        match.isTriggered = true;
-
-        for(int i = 0; i < triggerIndexes.Length; i++)
+        if (!hasTrigger || groupsWithTriggers.Count == 0)
         {
-            if (obj.Equals(objectives[triggerIndexes[i]].gameObject))
+            return;
+        }
+
+        // Execute triggers in each group with triggers
+        foreach(Group group in groupsWithTriggers)
+        {
+            // Check for every trigger in the group
+            for (int i = 0; i < group.triggers.Count; i++)
             {
-                if (mustBeConsecutive)
+                TriggerInfo tInfo = group.triggers[i];
+                // Search for the completed gameObject in all triggers
+                for (int j = 0; j < tInfo.triggerIndexes.Length; j++)
                 {
-                    bool isConsecutive = true;
-                    foreach (ObjectiveInfo info in objectives)
+                    // Find index of gameobject in the objectives list
+                    /// PUT THIS AFTER LINE 96 (AFTER DEBUG) TO PREVENT UNNECESSARY CHECKING LATER
+                    /// KEEP IT HERE DURING DEVELOPMENT
+                    int indexOfGameobject = -1;
+                    foreach (ObjectiveInfo oInfo in group.objectives)
                     {
-                        if (!info.isTriggered)
+                        if (oInfo.gameObject.Equals(obj))
                         {
-                            isConsecutive = false;
+                            indexOfGameobject = group.objectives.IndexOf(oInfo);
+                            break;
                         }
                     }
-                    if (isConsecutive)
+                    // If index wasn't found, abort
+                    if (indexOfGameobject == -1)
                     {
-                        triggerEvents.Invoke();
+                        continue;
+                    }
+
+                    // Check if the object that is hit is the one that should do the trigger
+                    if (!obj.Equals(group.objectives[tInfo.triggerIndexes[j]].gameObject))
+                    {
+                        Debug.Log($"{indexOfGameobject} is not a trigger of {group.name} of trigger {i}");
+                        continue;
+                    }
+                    Debug.Log($"{indexOfGameobject} is a trigger of {group.name} of trigger {i}");
+                    // Check if it must be hit in order
+                    ///Debug.Log(tInfo.mustBeConsecutiveToTrigger);
+                    if (tInfo.mustBeConsecutiveToTrigger && tInfo.triggerIndexes.Length > 0)
+                    {
+                        // Check if all objectives with an index lower of gameobjects are hit in order
+                        bool isConsecutive = true;
+                        for(int k = 0; k < indexOfGameobject; k++)
+                        {
+                            ObjectiveInfo oInfo = group.objectives[k];
+                            string status = oInfo.isCompleted ? "Completed" : "Not completed";
+                            ///Debug.Log($"{group.objectives.IndexOf(oInfo)} was {status}");
+                            if (!oInfo.isCompleted)
+                            {
+                                isConsecutive = false;
+                            }
+                        }
+                        if (isConsecutive)
+                        {
+                            // Trigger all events listed in the trigger
+                            tInfo.triggerEvents.Invoke();
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        // Trigger all events listed in the trigger
+                        tInfo.triggerEvents.Invoke();
+                        break;
                     }
                 }
-                else
-                {
-
-                    triggerEvents.Invoke();
-                }
             }
         }
     }
 }
-
-#if UNITY_EDITOR
-[CustomEditor(typeof(ObjectiveGroup))]
-public class ObjectiveGroupInspectorEditor : Editor
-{
-    SerializedProperty objectives;
-    SerializedProperty triggerOnAmount;
-
-    void OnEnable()
-    {
-        // Fetch the objects from the GameObject script to display in the inspector
-        objectives = serializedObject.FindProperty("objectives");
-        triggerOnAmount = serializedObject.FindProperty("triggerIndexes");
-    }
-
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
-        bool showWarning = false;
-        for(int i = 0; i < triggerOnAmount.arraySize; i++)
-        {
-            if (triggerOnAmount.GetArrayElementAtIndex(i).intValue > objectives.arraySize - 1)
-            {
-                showWarning = true;
-            }
-        }
-        if (showWarning)
-        {
-            GUIStyle style = new(EditorStyles.textField);
-            style.normal.textColor = Color.red;
-            GUILayout.Label("This index doesn't exist in the objectives list.", style);
-        }
-    }
-}
-#endif
