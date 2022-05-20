@@ -25,6 +25,36 @@ public class TrackManager : MonoBehaviour
         activePath = originalPath;
         onAltTrack = false;
         currentWaypoint = 0;
+
+        Debug.Log(alternativeTracks[1].transform.TransformPoint(alternativeTracks[1].m_Waypoints[0].position));
+
+        foreach (CinemachineSmoothPath path in alternativeTracks)
+        {
+            Vector3 firstWaypointPos = new Vector3();
+            Vector3 lastWaypointPos = new Vector3();
+            firstWaypointPos = path.transform.TransformPoint(path.m_Waypoints[0].position);
+            lastWaypointPos = path.transform.TransformPoint(path.m_Waypoints[path.m_Waypoints.Length - 1].position);
+            FindWaypoint(firstWaypointPos);
+            FindWaypoint(lastWaypointPos);
+        }
+    }
+
+    void FindWaypoint(Vector3 waypointPos)
+    {
+        float previousDistance = Mathf.Infinity;
+        CinemachineSmoothPath.Waypoint waypoint = new CinemachineSmoothPath.Waypoint();
+        waypoint.position = track.transform.InverseTransformPoint(waypointPos);
+        waypoint.roll = 0;
+        for (int i = 0; i < activePath.Length; i++)
+        {
+            if (Vector3.Distance(transform.TransformPoint(activePath[i].position), waypointPos) >= previousDistance)
+            {
+                Debug.Log("Place waypoint at index [" + i + "]");
+                ArrayUtility.Insert(ref activePath, i, waypoint);
+                break;
+            }
+            previousDistance = Vector3.Distance(transform.TransformPoint(waypointPos), transform.TransformPoint(activePath[i].position));
+        }
     }
 
     void Update()
@@ -34,6 +64,7 @@ public class TrackManager : MonoBehaviour
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
         if(cart.m_Position >= currentWaypoint + 0.95)
         {
+            Debug.Log(cart.m_Position);
             if (onAltTrack) CheckIfCartEnd();
 
             //should have an IF check to check if the player wants to go on the alternate track.
@@ -49,7 +80,7 @@ public class TrackManager : MonoBehaviour
     }
 
     void CheckIfCartEnd() { 
-        if(Mathf.Round(cart.m_Position) == 6)
+        if(Mathf.Round(cart.m_Position) == activeAltPath.Length - 1)
         {
             onAltTrack = false;
         }
