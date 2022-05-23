@@ -12,44 +12,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77dee27d70c5da5478ac4fbd771b4410, type: 3}
   m_Name: Default Brush Collection
   m_EditorClassIdentifier: 
-  _brushes: []
-  primarySelectedBrush:
-    brushObject: {fileID: 6049000149890206186, guid: c87befafb94f6fa4a85ad32c41ce8e96,
+  _brushes:
+  - brushObject: {fileID: 7936384593270519390, guid: 8d26ce39fad5d4148847dd4b77cd6338,
       type: 3}
     usePrefabs: 1
     allowIntercollision: 0
-    alignToSurface: 0
-    randomizeXRotation: 0
-    randomizeYRotation: 0
-    randomizeZRotation: 0
+    alignToSurface: 1
+    randomizeXRotation: 1
+    randomizeYRotation: 1
+    randomizeZRotation: 1
     parentContainer: {fileID: 0}
     density: 1
     brushSize: 5
     minScale: 0.5
-    maxScale: 1
+    maxScale: 1.5
     offsetFromPivot: {x: 0, y: 0, z: 0}
     rotOffsetFromPivot: {x: 0, y: 0, z: 0}
     minSlope: 0
-    maxSlope: 0
+    maxSlope: 360
+    layerFilter:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    isTagFilteringEnabled: 0
+    tagFilter: 
+  primarySelectedBrush:
+    brushObject: {fileID: 7936384593270519390, guid: 8d26ce39fad5d4148847dd4b77cd6338,
+      type: 3}
+    usePrefabs: 1
+    allowIntercollision: 0
+    alignToSurface: 1
+    randomizeXRotation: 1
+    randomizeYRotation: 1
+    randomizeZRotation: 1
+    parentContainer: {fileID: 0}
+    density: 1
+    brushSize: 5
+    minScale: 0.5
+    maxScale: 1.5
+    offsetFromPivot: {x: 0, y: 0, z: 0}
+    rotOffsetFromPivot: {x: 0, y: 0, z: 0}
+    minSlope: 0
+    maxSlope: 360
     layerFilter:
       serializedVersion: 2
       m_Bits: 4294967295
     isTagFilteringEnabled: 0
     tagFilter: 
   selectedBrushes:
-  - brushObject: {fileID: 6049000149890206186, guid: c87befafb94f6fa4a85ad32c41ce8e96,
+  - brushObject: {fileID: 7936384593270519390, guid: 8d26ce39fad5d4148847dd4b77cd6338,
       type: 3}
     usePrefabs: 1
     allowIntercollision: 0
     alignToSurface: 1
-    randomizeXRotation: 0
+    randomizeXRotation: 1
     randomizeYRotation: 1
-    randomizeZRotation: 0
+    randomizeZRotation: 1
     parentContainer: {fileID: 0}
     density: 1
     brushSize: 5
     minScale: 0.5
-    maxScale: 1
+    maxScale: 1.5
     offsetFromPivot: {x: 0, y: 0, z: 0}
     rotOffsetFromPivot: {x: 0, y: 0, z: 0}
     minSlope: 0
