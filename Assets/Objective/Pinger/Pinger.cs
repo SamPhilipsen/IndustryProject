@@ -36,7 +36,7 @@ public class Pinger : MonoBehaviour, IObjective
 
     public void Disable()
     {
-        Debug.Log("Disabled");
+        ///Debug.Log("Disabled");
         gameObject.SetActive(false);
         pingerObject.SetActive(false);
         completed = false;
