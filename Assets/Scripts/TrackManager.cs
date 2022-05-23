@@ -64,7 +64,6 @@ public class TrackManager : MonoBehaviour
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
         if(cart.m_Position >= currentWaypoint + 0.95)
         {
-            Debug.Log(cart.m_Position);
             if (onAltTrack) CheckIfCartEnd();
 
             //should have an IF check to check if the player wants to go on the alternate track.
@@ -73,7 +72,7 @@ public class TrackManager : MonoBehaviour
             {
                 foreach (CinemachineSmoothPath path in alternativeTracks)
                 {
-                    if (activePath[currentWaypoint + 1].position == path.m_Waypoints[0].position) AAAAAAAAAAAAH(path);
+                    if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position)) AAAAAAAAAAAAH(path);
                 }
             }
         }
@@ -83,6 +82,7 @@ public class TrackManager : MonoBehaviour
         if(Mathf.Round(cart.m_Position) == activeAltPath.Length - 1)
         {
             onAltTrack = false;
+            activeAltPath = null;
         }
     }
 
@@ -92,8 +92,10 @@ public class TrackManager : MonoBehaviour
 
         for(int i = 0; i < activePath.Length; i++)
         {
-            if (activePath[i].position == switchingPath.m_Waypoints[0].position) firstPointIndex = i;
-            if (activePath[i].position == switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position) endPointIndex = i;
+            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[0].position)) 
+                firstPointIndex = i;
+            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position)) 
+                endPointIndex = i;
         }
         Debug.Log("First: " + firstPointIndex);
         Debug.Log("End: " + endPointIndex);
@@ -103,11 +105,17 @@ public class TrackManager : MonoBehaviour
         for (int i = 0; i < activePath.Length; i++)
         {
             if (i > firstPointIndex && i < endPointIndex)
-            {
+            { 
                 continue;
             }
             if (i == firstPointIndex)
             {
+                Debug.Log("Started adding waypoints at: " + i);
+                /*foreach(CinemachineSmoothPath.Waypoint wp in switchingPath.m_Waypoints)
+                {
+                    track.transform.TransformPoint(wp.position);
+                    ArrayUtility.Add(ref temp, wp);
+                }*/
                 ArrayUtility.AddRange(ref temp, switchingPath.m_Waypoints);
             }
             if (i != firstPointIndex && i != endPointIndex) ArrayUtility.Add(ref temp, activePath[i]);
