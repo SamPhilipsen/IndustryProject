@@ -26,12 +26,9 @@ public class TrackManager : MonoBehaviour
         onAltTrack = false;
         currentWaypoint = 0;
 
-        Debug.Log(alternativeTracks[1].transform.TransformPoint(alternativeTracks[1].m_Waypoints[0].position));
-
         foreach (CinemachineSmoothPath path in alternativeTracks)
         {
-            Vector3 firstWaypointPos = new Vector3();
-            Vector3 lastWaypointPos = new Vector3();
+            Vector3 firstWaypointPos, lastWaypointPos;
             firstWaypointPos = path.transform.TransformPoint(path.m_Waypoints[0].position);
             lastWaypointPos = path.transform.TransformPoint(path.m_Waypoints[path.m_Waypoints.Length - 1].position);
             FindWaypoint(firstWaypointPos);
@@ -111,11 +108,11 @@ public class TrackManager : MonoBehaviour
             if (i == firstPointIndex)
             {
                 Debug.Log("Started adding waypoints at: " + i);
-                /*foreach(CinemachineSmoothPath.Waypoint wp in switchingPath.m_Waypoints)
+                for (int x = 0; x < switchingPath.m_Waypoints.Length; x++)
                 {
-                    track.transform.TransformPoint(wp.position);
-                    ArrayUtility.Add(ref temp, wp);
-                }*/
+                    switchingPath.m_Waypoints[x].position = switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[x].position);
+                    switchingPath.m_Waypoints[x].position = track.transform.InverseTransformPoint(switchingPath.m_Waypoints[x].position);
+                }
                 ArrayUtility.AddRange(ref temp, switchingPath.m_Waypoints);
             }
             if (i != firstPointIndex && i != endPointIndex) ArrayUtility.Add(ref temp, activePath[i]);
