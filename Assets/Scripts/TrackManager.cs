@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class TrackManager : MonoBehaviour
 {
-    [SerializeField] private Transform playerLocation;
     [SerializeField] private CinemachineDollyCart cart;
     [SerializeField] private CinemachineSmoothPath[] alternativeTracks;
     private CinemachineSmoothPath track;
@@ -17,12 +16,11 @@ public class TrackManager : MonoBehaviour
 
     private bool onAltTrack;
     private int currentWaypoint;
-    
+
     void Start()
     {
         track = GetComponentInParent<CinemachineSmoothPath>();
-        originalPath = track.m_Waypoints;
-        activePath = originalPath;
+        activePath = track.m_Waypoints;
         onAltTrack = false;
         currentWaypoint = 0;
 
@@ -34,32 +32,36 @@ public class TrackManager : MonoBehaviour
             FindWaypoint(firstWaypointPos);
             FindWaypoint(lastWaypointPos);
         }
+        originalPath = activePath;
     }
 
     void FindWaypoint(Vector3 waypointPos)
     {
-        float previousDistance = Mathf.Infinity;
+        //TODO: Check of de waypoint die het dichtstebij is voor of achter de waypoint is.
+        float closestDistance = Mathf.Infinity;
+        int closestIndex = 0;
+
         CinemachineSmoothPath.Waypoint waypoint = new CinemachineSmoothPath.Waypoint();
         waypoint.position = track.transform.InverseTransformPoint(waypointPos);
         waypoint.roll = 0;
         for (int i = 0; i < activePath.Length; i++)
         {
-            if (Vector3.Distance(transform.TransformPoint(activePath[i].position), waypointPos) >= previousDistance)
+            float distanceBetweenPoints = Vector3.Distance(transform.TransformPoint(activePath[i].position), waypointPos);
+            if (distanceBetweenPoints < closestDistance)
             {
-                Debug.Log("Place waypoint at index [" + i + "]");
-                ArrayUtility.Insert(ref activePath, i, waypoint);
-                break;
+                closestDistance = distanceBetweenPoints;
+                closestIndex = i;
             }
-            previousDistance = Vector3.Distance(transform.TransformPoint(waypointPos), transform.TransformPoint(activePath[i].position));
         }
+        ArrayUtility.Insert(ref activePath, closestIndex, waypoint);
     }
 
     void Update()
     {
         track.m_Waypoints = activePath;
-        
+
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
-        if(cart.m_Position >= currentWaypoint + 0.95)
+        if (cart.m_Position >= currentWaypoint + 0.95)
         {
             if (onAltTrack) CheckIfCartEnd();
 
@@ -69,29 +71,32 @@ public class TrackManager : MonoBehaviour
             {
                 foreach (CinemachineSmoothPath path in alternativeTracks)
                 {
-                    if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position)) AAAAAAAAAAAAH(path);
+                    if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
+                        AAAAAAAAAAAAH(path);
                 }
             }
         }
     }
 
-    void CheckIfCartEnd() { 
-        if(Mathf.Round(cart.m_Position) == activeAltPath.Length - 1)
+    void CheckIfCartEnd()
+    {
+        if (Mathf.Round(cart.m_Position) == activeAltPath.Length - 1)
         {
             onAltTrack = false;
             activeAltPath = null;
         }
     }
 
-    void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath) {
+    void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath)
+    {
         onAltTrack = true;
         int firstPointIndex = 0; int endPointIndex = 0;
 
-        for(int i = 0; i < activePath.Length; i++)
+        for (int i = 0; i < activePath.Length; i++)
         {
-            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[0].position)) 
+            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[0].position))
                 firstPointIndex = i;
-            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position)) 
+            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position))
                 endPointIndex = i;
         }
         Debug.Log("First: " + firstPointIndex);
@@ -102,7 +107,7 @@ public class TrackManager : MonoBehaviour
         for (int i = 0; i < activePath.Length; i++)
         {
             if (i > firstPointIndex && i < endPointIndex)
-            { 
+            {
                 continue;
             }
             if (i == firstPointIndex)
@@ -117,10 +122,8 @@ public class TrackManager : MonoBehaviour
             }
             if (i != firstPointIndex && i != endPointIndex) ArrayUtility.Add(ref temp, activePath[i]);
         }
-
         activeAltPath = switchingPath.m_Waypoints;
         activePath = temp;
-
     }
 
 }
