@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System;
 
 public class TrackManager : MonoBehaviour
 {
@@ -40,6 +41,7 @@ public class TrackManager : MonoBehaviour
         //TODO: Check of de waypoint die het dichtstebij is voor of achter de waypoint is.
         float closestDistance = Mathf.Infinity;
         int closestIndex = 0;
+        int newWaypointIndex;
 
         CinemachineSmoothPath.Waypoint waypoint = new CinemachineSmoothPath.Waypoint();
         waypoint.position = track.transform.InverseTransformPoint(waypointPos);
@@ -53,7 +55,17 @@ public class TrackManager : MonoBehaviour
                 closestIndex = i;
             }
         }
-        ArrayUtility.Insert(ref activePath, closestIndex, waypoint);
+        newWaypointIndex = closestIndex + 1;
+
+        float distanceBehindClosestPoint = Vector3.Distance(activePath[closestIndex - 1].position, waypoint.position);
+        float distanceInfrontClosestPoint = Vector3.Distance(activePath[closestIndex + 1].position, waypoint.position);
+
+        if (distanceBehindClosestPoint - closestDistance > distanceInfrontClosestPoint - closestDistance)
+            newWaypointIndex = closestIndex + 1;
+        else
+            newWaypointIndex = closestIndex;
+
+        ArrayUtility.Insert(ref activePath, newWaypointIndex, waypoint);
     }
 
     void Update()
@@ -61,8 +73,10 @@ public class TrackManager : MonoBehaviour
         track.m_Waypoints = activePath;
 
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
+        Debug.Log("Current waypoint: " + currentWaypoint);
         if (cart.m_Position >= currentWaypoint + 0.95)
         {
+            if (currentWaypoint == 0) activePath = originalPath;
             if (onAltTrack) CheckIfCartEnd();
 
             //should have an IF check to check if the player wants to go on the alternate track.
@@ -71,10 +85,18 @@ public class TrackManager : MonoBehaviour
             {
                 foreach (CinemachineSmoothPath path in alternativeTracks)
                 {
-                    if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
-                        AAAAAAAAAAAAH(path);
+                    try
+                    {
+                        if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
+                            AAAAAAAAAAAAH(path);
+                    }
+                    catch (IndexOutOfRangeException ex)
+                    {
+                    }
+
                 }
             }
+
         }
     }
 
