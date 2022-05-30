@@ -22,7 +22,7 @@ using System.Windows;
         [SerializeField] public int direction;
         [SerializeField] public int height;
 
-        void Start()
+    void Start()
         {
             init_serial();
 

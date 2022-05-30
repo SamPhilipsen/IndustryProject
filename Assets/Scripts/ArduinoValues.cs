@@ -4,7 +4,6 @@ using UnityEngine;
 
 public static class ArduinoValues
 {
-    private static float maxPotValue = 900f;
     private static float desiredMaxValueMovement = 1f;
     private static float desiredMaxValueSpeed = 4f;
 
@@ -13,19 +12,40 @@ public static class ArduinoValues
 
     public static void GetvaluePotXMovement(float potValue)
     {
-        float value = desiredMaxValueMovement / maxPotValue * potValue;
+        float value = GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
         xMovement = (value - (desiredMaxValueMovement / 2)) * 2;
     }
 
     public static void GetvaluePotYMovement(float potValue)
     {
-        float value = desiredMaxValueMovement / maxPotValue * potValue;
+        float value = GetCalibrateValue(GlobalPotValues.verticalValues, potValue);
         yMovement = (value - (desiredMaxValueMovement / 2)) * 2;
     }
 
     public static float GetValuePotSpeed(float potValue)
     {
-        return desiredMaxValueSpeed / maxPotValue * potValue + 1;
+        return desiredMaxValueSpeed / GetCalibrateValue(GlobalPotValues.speedValues, potValue) + 1;
+    }
+
+    private static float GetCalibrateValue(DifferentPotValues differentPotValues, float potValue)
+    {
+        float i = 0;
+
+        float tempPotValue = potValue - differentPotValues.turnoverValue;
+
+        if (tempPotValue > 0)
+        {
+            i = tempPotValue / differentPotValues.maxValue;
+        }
+        else if (tempPotValue < 0)
+        {
+            i = tempPotValue / differentPotValues.minValue;
+        }
+        else if (tempPotValue == 0)
+        {
+            i = 0;
+        }
+        return i;
     }
 
     public static void CheckDirectionalSpeed()

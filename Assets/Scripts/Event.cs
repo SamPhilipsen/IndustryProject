@@ -26,9 +26,9 @@ public class Event : MonoBehaviour
     {
         if (passedPosition == false)
         {
-            passedPosition = true;
             if (positionTrack < player.GetComponent<Cinemachine.CinemachineDollyCart>().m_Position)
-            {                
+            {
+                passedPosition = true;
                 totalEncounter++;
                 ControlEncounters();
             }
