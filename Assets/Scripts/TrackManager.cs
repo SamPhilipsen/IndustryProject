@@ -55,10 +55,26 @@ public class TrackManager : MonoBehaviour
                 closestIndex = i;
             }
         }
-        newWaypointIndex = closestIndex + 1;
 
-        float distanceBehindClosestPoint = Vector3.Distance(activePath[closestIndex - 1].position, waypoint.position);
-        float distanceInfrontClosestPoint = Vector3.Distance(activePath[closestIndex + 1].position, waypoint.position);
+        float distanceBehindClosestPoint;
+        float distanceInfrontClosestPoint;
+
+        try
+        {
+            distanceBehindClosestPoint = Vector3.Distance(activePath[closestIndex - 1].position, waypoint.position);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            distanceBehindClosestPoint = Vector3.Distance(activePath[0].position, waypoint.position);
+        }
+        try
+        {
+            distanceInfrontClosestPoint = Vector3.Distance(activePath[closestIndex + 1].position, waypoint.position);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            distanceInfrontClosestPoint = Vector3.Distance(activePath[0].position, waypoint.position);
+        }
 
         if (distanceBehindClosestPoint - closestDistance > distanceInfrontClosestPoint - closestDistance)
             newWaypointIndex = closestIndex + 1;
@@ -73,7 +89,6 @@ public class TrackManager : MonoBehaviour
         track.m_Waypoints = activePath;
 
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
-        Debug.Log("Current waypoint: " + currentWaypoint);
         if (cart.m_Position >= currentWaypoint + 0.95)
         {
             if (currentWaypoint == 0) activePath = originalPath;
@@ -90,10 +105,7 @@ public class TrackManager : MonoBehaviour
                         if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
                             AAAAAAAAAAAAH(path);
                     }
-                    catch (IndexOutOfRangeException ex)
-                    {
-                    }
-
+                    catch (IndexOutOfRangeException) { }
                 }
             }
 
@@ -121,8 +133,6 @@ public class TrackManager : MonoBehaviour
             if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position))
                 endPointIndex = i;
         }
-        Debug.Log("First: " + firstPointIndex);
-        Debug.Log("End: " + endPointIndex);
 
         CinemachineSmoothPath.Waypoint[] temp = new CinemachineSmoothPath.Waypoint[0];
 
@@ -134,7 +144,6 @@ public class TrackManager : MonoBehaviour
             }
             if (i == firstPointIndex)
             {
-                Debug.Log("Started adding waypoints at: " + i);
                 for (int x = 0; x < switchingPath.m_Waypoints.Length; x++)
                 {
                     switchingPath.m_Waypoints[x].position = switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[x].position);
