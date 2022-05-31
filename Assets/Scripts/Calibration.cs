@@ -7,8 +7,6 @@ using TMPro;
 public class Calibration : MonoBehaviour
 {
     [SerializeField]
-    private GameObject communicationManager;
-    [SerializeField]
     private GameObject dropDownBox;
 
     [SerializeField]
@@ -25,28 +23,39 @@ public class Calibration : MonoBehaviour
     [SerializeField]
     private List<GameObject> speedSlidersList;
 
-    private void Update()
-    {
-        //ChangeSliders();
-    }
+    private List<float> allValues = new List<float>();
 
     private void Awake()
     {
-        Calibrate();
+
+        allValues = GetValues();
+        SetValues(allValues);
     }
 
     public void ChangeSliders()
-    {            
+    {
+        PlayerPrefs.Save();
+        allValues = GetValues();
+
+        SetValues(allValues);
         if (dropDownBox.GetComponent<TMP_Dropdown>().value == 0)
         {
             horizontalSliders.SetActive(true);
+            foreach (GameObject obj in horizontalSlidersList)
+            {
+                obj.GetComponent<SliderValueToText>().ChangeText();
+            }
 
             verticalSliders.SetActive(false);
-            speedSliders.SetActive(false);
+            speedSliders.SetActive(false);            
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 1)
         {
             verticalSliders.SetActive(true);
+            foreach (GameObject obj in verticalSlidersList)
+            {
+                obj.GetComponent<SliderValueToText>().ChangeText();
+            }
 
             horizontalSliders.SetActive(false);
             speedSliders.SetActive(false);
@@ -54,6 +63,10 @@ public class Calibration : MonoBehaviour
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 2)
         {
             speedSliders.SetActive(true);
+            foreach (GameObject obj in speedSlidersList)
+            {
+                obj.GetComponent<SliderValueToText>().ChangeText();
+            }
 
             verticalSliders.SetActive(false);
             horizontalSliders.SetActive(false);
@@ -67,38 +80,118 @@ public class Calibration : MonoBehaviour
             float turnoverValue = horizontalSlidersList[1].GetComponent<Slider>().value;
             float tempMinValue = horizontalSlidersList[0].GetComponent<Slider>().value - turnoverValue;
             float tempMaxValue = horizontalSlidersList[2].GetComponent<Slider>().value - turnoverValue;
-            GlobalPotValues.horizontalValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
+            if (GlobalPotValues.horizontalValues == null)
+            {
+                GlobalPotValues.horizontalValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
+            }
+            else
+            {
+                GlobalPotValues.horizontalValues.minValue = tempMinValue;
+                GlobalPotValues.horizontalValues.turnoverValue = turnoverValue;
+                GlobalPotValues.horizontalValues.maxValue = tempMaxValue;
+            }
+            SaveValues(0, horizontalSlidersList);
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 1)
         {
             float turnoverValue = verticalSlidersList[1].GetComponent<Slider>().value;
             float tempMinValue = verticalSlidersList[0].GetComponent<Slider>().value - turnoverValue;
             float tempMaxValue = verticalSlidersList[2].GetComponent<Slider>().value - turnoverValue;
-            GlobalPotValues.verticalValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
+            if (GlobalPotValues.verticalValues == null)
+            {
+                GlobalPotValues.verticalValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
+            }
+            else
+            {
+                GlobalPotValues.verticalValues.minValue = tempMinValue;
+                GlobalPotValues.verticalValues.turnoverValue = turnoverValue;
+                GlobalPotValues.verticalValues.maxValue = tempMaxValue;
+            }
+            SaveValues(1, verticalSlidersList);
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 2)
         {
             float turnoverValue = speedSlidersList[1].GetComponent<Slider>().value;
             float tempMinValue = speedSlidersList[0].GetComponent<Slider>().value - turnoverValue;
             float tempMaxValue = speedSlidersList[2].GetComponent<Slider>().value - turnoverValue;
-            GlobalPotValues.speedValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
+            if (GlobalPotValues.speedValues == null)
+            {
+                GlobalPotValues.speedValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
+            }
+            else
+            {
+                GlobalPotValues.speedValues.minValue = tempMinValue;
+                GlobalPotValues.speedValues.turnoverValue = turnoverValue;
+                GlobalPotValues.speedValues.maxValue = tempMaxValue;
+            }
+            SaveValues(2, speedSlidersList);
+        }
+        allValues = GetValues();
+    }
+
+    private void SetValues(List<float> values)
+    {
+                //Horizontal
+                    horizontalSlidersList[0].GetComponent<Slider>().value = values[0];
+                    horizontalSlidersList[1].GetComponent<Slider>().value = values[1];
+                    horizontalSlidersList[2].GetComponent<Slider>().value = values[2];
+                //Vertical
+                    verticalSlidersList[0].GetComponent<Slider>().value = values[3];
+                    verticalSlidersList[1].GetComponent<Slider>().value = values[4];
+                    verticalSlidersList[2].GetComponent<Slider>().value = values[5];
+                //Speed
+                    speedSlidersList[0].GetComponent<Slider>().value = values[6];
+                    speedSlidersList[1].GetComponent<Slider>().value = values[7];
+                    speedSlidersList[2].GetComponent<Slider>().value = values[8];
+    }
+
+    private void SaveValues(int indexSliders, List<GameObject> values)
+    {        
+        int j = 0;
+        for (int i = 0 + (indexSliders * 3); i < (indexSliders + 1) * 3; i++)
+        {
+            PlayerPrefs.SetFloat(i.ToString(), values[j].GetComponent<Slider>().value);
+            j++;
+        }
+        PlayerPrefs.Save();
+
+
+    }
+
+    private List<float> GetValues()
+    {
+        List<float> values = new List<float>();
+        for (int i = 0; i < 9; i++)
+        {
+            float value = PlayerPrefs.GetFloat(i.ToString(), -1f);
+            values.Add(value);
         }
 
-        //different method
-        //float i = 0;
-
-        //if (tempPotValue > 0)
-        //{
-        //    i = tempPotValue / tempMaxValue;
-        //}
-        //else if (tempPotValue < 0)
-        //{
-        //    i = tempPotValue / tempMinValue;
-        //}
-        //else if (tempPotValue == 0)
-        //{
-        //    i = 0;
-        //}
-
+        for (int i = 0; i < values.Count; i++)
+        {
+            if (values[i] < 0f)
+            {
+                int index = i;
+                while (index >= 3)
+                {
+                    index -= 3;
+                }
+                switch (index)
+                {
+                    case 0:
+                        values[i] = 0f;
+                        break;
+                    case 1:
+                        values[i] = 512f;
+                        break;
+                    case 2:
+                        values[i] = 1023f;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return values;
     }
 }
