@@ -7,8 +7,10 @@ using System;
 
 public class TrackManager : MonoBehaviour
 {
+    [SerializeField] bool switchingTracks;
     [SerializeField] private CinemachineDollyCart cart;
     [SerializeField] private CinemachineSmoothPath[] alternativeTracks;
+
     private CinemachineSmoothPath track;
 
     private CinemachineSmoothPath.Waypoint[] activePath;
@@ -38,7 +40,6 @@ public class TrackManager : MonoBehaviour
 
     void FindWaypoint(Vector3 waypointPos)
     {
-        //TODO: Check of de waypoint die het dichtstebij is voor of achter de waypoint is.
         float closestDistance = Mathf.Infinity;
         int closestIndex = 0;
         int newWaypointIndex;
@@ -59,6 +60,9 @@ public class TrackManager : MonoBehaviour
         float distanceBehindClosestPoint;
         float distanceInfrontClosestPoint;
 
+        //These try-catch blocks are to avoid the script trying to find a waypoint that is not there, because the next waypoint might be 0.
+        //For example, if it tries to find the index infront of the closest point, but the closest point is also the last index in the array it gets an index out of range exception.
+        //Because the track is a loop, an index out of range exception will probably always be at 0.
         try
         {
             distanceBehindClosestPoint = Vector3.Distance(activePath[closestIndex - 1].position, waypoint.position);
@@ -89,26 +93,27 @@ public class TrackManager : MonoBehaviour
         track.m_Waypoints = activePath;
 
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
-        if (cart.m_Position >= currentWaypoint + 0.95)
+        if (cart.m_Position >= currentWaypoint + 0.8)
         {
             if (currentWaypoint == 0) activePath = originalPath;
             if (onAltTrack) CheckIfCartEnd();
 
-            //should have an IF check to check if the player wants to go on the alternate track.
-            //Currently does it automatically.
-            if (!onAltTrack)
+            //This should be changed by the player actually steering in said direction
+            if (switchingTracks)
             {
-                foreach (CinemachineSmoothPath path in alternativeTracks)
+                if (!onAltTrack)
                 {
-                    try
+                    foreach (CinemachineSmoothPath path in alternativeTracks)
                     {
-                        if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
-                            AAAAAAAAAAAAH(path);
+                        try
+                        {
+                            if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
+                                AAAAAAAAAAAAH(path);
+                        }
+                        catch (IndexOutOfRangeException) { }
                     }
-                    catch (IndexOutOfRangeException) { }
                 }
             }
-
         }
     }
 
