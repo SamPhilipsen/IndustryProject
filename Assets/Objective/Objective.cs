@@ -18,4 +18,9 @@ public interface IObjective
     /// Can be used in animations or triggers to disable the objective
     /// </summary>
     void Disable();
+
+    /// <summary>
+    /// Reset the objective to its original state
+    /// </summary>
+    void Reset();
 }

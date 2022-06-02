@@ -37,4 +37,15 @@ public class Crate : MonoBehaviour, IObjective
     {
         Instantiate(particles, gameObject.transform.parent);
     }
+
+    public void Reset()
+    {
+        gameObject.SetActive(true);
+        animator.Play("Idle");
+        Triggerable triggerable = GetComponentInParent<Triggerable>();
+        if (triggerable != null)
+        {
+            triggerable.Reset(gameObject);
+        }
+    }
 }

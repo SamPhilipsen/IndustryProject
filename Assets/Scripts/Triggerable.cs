@@ -12,4 +12,12 @@ public class Triggerable : MonoBehaviour
             group.ExecuteTrigger(gameObject);
         }
     }
+    public void Reset(GameObject obj)
+    {
+        ObjectiveGroup group = GetComponentInParent<ObjectiveGroup>();
+        if (group != null)
+        {
+            group.ResetObjective(obj);
+        }
+    }
 }

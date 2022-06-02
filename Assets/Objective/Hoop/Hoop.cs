@@ -6,7 +6,13 @@ public class Hoop : MonoBehaviour, IObjective
 {
     [SerializeField] GameObject player;
     [SerializeField] ParticleSystem particles;
+    [SerializeField] Material normalMaterial;
     [SerializeField] Material completeMaterial;
+
+    private void Awake()
+    {
+        this.normalMaterial = GetComponent<Material>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -37,5 +43,16 @@ public class Hoop : MonoBehaviour, IObjective
     public void SpawnParticles()
     {
         Instantiate(particles, gameObject.transform.parent);
+    }
+
+    public void Reset()
+    {
+        gameObject.SetActive(true);
+        GetComponent<MeshRenderer>().material = normalMaterial;
+        Triggerable triggerable = GetComponentInParent<Triggerable>();
+        if (triggerable != null)
+        {
+            triggerable.Reset(gameObject);
+        }
     }
 }

@@ -33,6 +33,35 @@ public class ObjectiveGroup : MonoBehaviour
 {
     public List<Group> objectiveGroups;
 
+    public void ResetObjective(GameObject obj)
+    {
+        foreach (Group group in objectiveGroups)
+        {
+            foreach (ObjectiveInfo oInfo in group.objectives)
+            {
+                if (oInfo.gameObject.Equals(obj))
+                {
+                    oInfo.isCompleted = false;
+                    oInfo.gameObject.GetComponent<IObjective>().Reset();
+                }
+            }
+
+        }
+    }
+
+    public void ResetObjectives()
+    {
+        foreach (Group group in objectiveGroups)
+        {
+            foreach (ObjectiveInfo oInfo in group.objectives)
+            {
+                oInfo.isCompleted = false;
+                IObjective objective = oInfo.gameObject.GetComponent<IObjective>() != null ? oInfo.gameObject.GetComponent<IObjective>() : oInfo.gameObject.GetComponentInChildren<IObjective>(true);
+                objective.Reset();
+            }
+        }
+    }
+
     public void ExecuteTrigger(GameObject obj)
     {
         // Checking if the gameObject that is triggered is part of an objective group
@@ -132,6 +161,21 @@ public class ObjectiveGroup : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+}
+
+[CustomEditor(typeof(ObjectiveGroup))]
+public class ObjectiveGroupGUIEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        ObjectiveGroup group = (ObjectiveGroup)target;
+        if (GUILayout.Button("Reset Objectives"))
+        {
+            group.ResetObjectives();
         }
     }
 }

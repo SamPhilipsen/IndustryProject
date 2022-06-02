@@ -47,5 +47,10 @@ public class Pinger : MonoBehaviour, IObjective
         Instantiate(confettiParticles, gameObject.transform);
         Instantiate(pingerParticles, gameObject.transform);
     }
+
+    public void Reset()
+    {
+        
+    }
 }
     
