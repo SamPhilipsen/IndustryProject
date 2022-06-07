@@ -4,18 +4,20 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class TrackManager : MonoBehaviour
 {
     [SerializeField] bool switchingTracks;
     [SerializeField] private CinemachineDollyCart cart;
-    [SerializeField] private CinemachineSmoothPath[] alternativeTracks;
+    [SerializeField] private CinemachineSmoothPath[] alternativeTracks1;
 
     private CinemachineSmoothPath track;
 
     private CinemachineSmoothPath.Waypoint[] activePath;
     private CinemachineSmoothPath.Waypoint[] originalPath;
     private CinemachineSmoothPath.Waypoint[] activeAltPath;
+    private CinemachineSmoothPath[] alternativeTracks = new CinemachineSmoothPath[0];
 
     private bool onAltTrack;
     private int currentWaypoint;
@@ -23,9 +25,16 @@ public class TrackManager : MonoBehaviour
     void Start()
     {
         track = GetComponentInParent<CinemachineSmoothPath>();
+
         activePath = track.m_Waypoints;
         onAltTrack = false;
         currentWaypoint = 0;
+
+        foreach (CinemachineSmoothPath path in alternativeTracks1)
+        {
+            ArrayUtility.Add(ref alternativeTracks, path);
+            Debug.Log(alternativeTracks);
+        }
 
         foreach (CinemachineSmoothPath path in alternativeTracks)
         {
@@ -92,12 +101,16 @@ public class TrackManager : MonoBehaviour
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
         if (cart.m_Position >= currentWaypoint + 0.8)
         {
-            if (currentWaypoint == 0) activePath = originalPath;
+            if (currentWaypoint == activePath.Length - 1)
+            {
+                activePath = originalPath;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
             if (onAltTrack) CheckIfCartEnd();
 
-            //should have an IF check to check if the player wants to go on the alternate track.
-            //Currently does it automatically.
-            if(switchingTracks)
+            //Should check if the player is actually wanting to move in a direction
+            //It is currently just a button you can activate in the inspector
+            if (switchingTracks)
             {
                 if (!onAltTrack)
                 {
@@ -124,8 +137,9 @@ public class TrackManager : MonoBehaviour
         }
     }
 
-    void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath)
+    void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath1)
     {
+        CinemachineSmoothPath switchingPath = switchingPath1;
         onAltTrack = true;
         int firstPointIndex = 0; int endPointIndex = 0;
 
@@ -158,6 +172,7 @@ public class TrackManager : MonoBehaviour
         }
         activeAltPath = switchingPath.m_Waypoints;
         activePath = temp;
+        switchingPath.InvalidateDistanceCache();
     }
 
 }
