@@ -23,7 +23,7 @@ public class Offset : MonoBehaviour
 
     private Vector3 newPositionPlayer = new Vector3();
     [SerializeField]
-    private string layerName;
+    private LayerMask layerName;
 
     private void Awake()
     {
@@ -37,20 +37,21 @@ public class Offset : MonoBehaviour
     
     void FixedUpdate()
     {
-        GetPotValues();
+        //GetPotValues();
 
-        Movement();
+        //Movement();
 
-        //if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
-        //{
-        //    Offsets();
-        //}
+        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
+        {
+            Offsets();
+        }
     }
 
-    private void OnCollisionStay(Collision collisionInfo)
+    private void OnCollisionEnter(Collision collisionInfo)
     {
-        if (collisionInfo.transform.tag == layerName)
+        if (collisionInfo.gameObject.layer == layerName)
         {
+            Debug.Log("Error with collision");
             Vector2 offsetPlayerPosition = new Vector2(0f, 0f);
             if (newPositionPlayer.x < 0)
             {
