@@ -44,7 +44,7 @@ public class Event : MonoBehaviour
     {
         if (totalEncounter == triggerAmount)
         {
-            PlayAnimation();
+            //PlayAnimation();
             totalEncounter = 0;
         }
     }

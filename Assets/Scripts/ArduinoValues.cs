@@ -31,17 +31,21 @@ public static class ArduinoValues
     {
         float i = 0;
 
-        float tempPotValue = potValue - differentPotValues.turnoverValue;
+        float tempPotValue = potValue;
 
-        if (tempPotValue > 0)
+        if (tempPotValue > differentPotValues.turnoverValue)
         {
-            i = tempPotValue / differentPotValues.maxValue;
+            tempPotValue -= differentPotValues.turnoverValue - differentPotValues.minValue;
+            float tempMaxValue = differentPotValues.maxValue - differentPotValues.turnoverValue - differentPotValues.minValue;
+            i = tempPotValue / tempMaxValue;
         }
-        else if (tempPotValue < 0)
+        else if (tempPotValue < differentPotValues.turnoverValue)
         {
-            i = tempPotValue / differentPotValues.minValue;
+            tempPotValue -= differentPotValues.minValue;
+            float tempTurnoverValue = differentPotValues.turnoverValue - differentPotValues.minValue;
+            i = tempPotValue / tempTurnoverValue * -1f;
         }
-        else if (tempPotValue == 0)
+        else if (tempPotValue == differentPotValues.turnoverValue)
         {
             i = 0;
         }

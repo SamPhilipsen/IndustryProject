@@ -77,7 +77,7 @@ using System.Windows;
                                 {
                                     speed = int.Parse(splitChars[1]);
                                 }
-                                else if (splitChars[0] == "Direction")
+                                if (splitChars[0] == "Direction")
                                 {
                                     direction = int.Parse(splitChars[1]);
                                 }

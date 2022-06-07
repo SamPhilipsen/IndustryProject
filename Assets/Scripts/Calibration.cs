@@ -30,6 +30,8 @@ public class Calibration : MonoBehaviour
 
         allValues = GetValues();
         SetValues(allValues);
+
+        SetGlobalValues();
     }
 
     public void ChangeSliders()
@@ -75,58 +77,54 @@ public class Calibration : MonoBehaviour
 
     public void Calibrate()
     {
+        //Check the turnoverValue
         if (dropDownBox.GetComponent<TMP_Dropdown>().value == 0)
         {
             float turnoverValue = horizontalSlidersList[1].GetComponent<Slider>().value;
-            float tempMinValue = horizontalSlidersList[0].GetComponent<Slider>().value - turnoverValue;
-            float tempMaxValue = horizontalSlidersList[2].GetComponent<Slider>().value - turnoverValue;
-            if (GlobalPotValues.horizontalValues == null)
-            {
-                GlobalPotValues.horizontalValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
-            }
-            else
-            {
+            float tempMinValue = horizontalSlidersList[0].GetComponent<Slider>().value;
+            float tempMaxValue = horizontalSlidersList[2].GetComponent<Slider>().value;
+            
                 GlobalPotValues.horizontalValues.minValue = tempMinValue;
                 GlobalPotValues.horizontalValues.turnoverValue = turnoverValue;
                 GlobalPotValues.horizontalValues.maxValue = tempMaxValue;
-            }
+            
             SaveValues(0, horizontalSlidersList);
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 1)
         {
             float turnoverValue = verticalSlidersList[1].GetComponent<Slider>().value;
-            float tempMinValue = verticalSlidersList[0].GetComponent<Slider>().value - turnoverValue;
-            float tempMaxValue = verticalSlidersList[2].GetComponent<Slider>().value - turnoverValue;
-            if (GlobalPotValues.verticalValues == null)
-            {
-                GlobalPotValues.verticalValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
-            }
-            else
-            {
+            float tempMinValue = verticalSlidersList[0].GetComponent<Slider>().value;
+            float tempMaxValue = verticalSlidersList[2].GetComponent<Slider>().value;
+            
                 GlobalPotValues.verticalValues.minValue = tempMinValue;
                 GlobalPotValues.verticalValues.turnoverValue = turnoverValue;
                 GlobalPotValues.verticalValues.maxValue = tempMaxValue;
-            }
+            
             SaveValues(1, verticalSlidersList);
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 2)
         {
             float turnoverValue = speedSlidersList[1].GetComponent<Slider>().value;
-            float tempMinValue = speedSlidersList[0].GetComponent<Slider>().value - turnoverValue;
-            float tempMaxValue = speedSlidersList[2].GetComponent<Slider>().value - turnoverValue;
-            if (GlobalPotValues.speedValues == null)
-            {
-                GlobalPotValues.speedValues = new DifferentPotValues(tempMinValue, turnoverValue, tempMaxValue);
-            }
-            else
-            {
+            float tempMinValue = speedSlidersList[0].GetComponent<Slider>().value;
+            float tempMaxValue = speedSlidersList[2].GetComponent<Slider>().value;
+            
                 GlobalPotValues.speedValues.minValue = tempMinValue;
                 GlobalPotValues.speedValues.turnoverValue = turnoverValue;
                 GlobalPotValues.speedValues.maxValue = tempMaxValue;
-            }
+            
             SaveValues(2, speedSlidersList);
         }
         allValues = GetValues();
+    }
+
+    private void SetGlobalValues()
+    {
+        //horizontal
+        GlobalPotValues.horizontalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
+        //vertical
+        GlobalPotValues.horizontalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
+        //speed
+        GlobalPotValues.horizontalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
     }
 
     private void SetValues(List<float> values)
