@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class TrackManager : MonoBehaviour
 {
     [SerializeField] bool switchingTracks;
+    [SerializeField] Offset offsetScript;
     [SerializeField] private CinemachineDollyCart cart;
     [SerializeField] private CinemachineSmoothPath[] alternativeTracks1;
 
@@ -98,6 +99,9 @@ public class TrackManager : MonoBehaviour
     {
         track.m_Waypoints = activePath;
 
+        if (offsetScript.newPositionPlayer.x >= 2 || offsetScript.newPositionPlayer.x <= -2) switchingTracks = true;
+        else switchingTracks = false;
+
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
         if (cart.m_Position >= currentWaypoint + 0.8)
         {
@@ -108,8 +112,6 @@ public class TrackManager : MonoBehaviour
             }
             if (onAltTrack) CheckIfCartEnd();
 
-            //Should check if the player is actually wanting to move in a direction
-            //It is currently just a button you can activate in the inspector
             if (switchingTracks)
             {
                 if (!onAltTrack)

@@ -510,6 +510,10 @@ MonoBehaviour:
   communicationManager: {fileID: 0}
   offsetValue: 0.3
   maxOffset: 25
+  newPositionPlayer: {x: 0, y: 0, z: 0}
+  layerName:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &2805604333987110910
 GameObject:
   m_ObjectHideFlags: 0
