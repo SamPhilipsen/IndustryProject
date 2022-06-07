@@ -21,7 +21,7 @@ public class Offset : MonoBehaviour
 
     private float baseSpeed;
 
-    private Vector3 newPositionPlayer = new Vector3();
+    public Vector3 newPositionPlayer = new Vector3();
     [SerializeField]
     private LayerMask layerName;
 
@@ -45,6 +45,7 @@ public class Offset : MonoBehaviour
         {
             Offsets();
         }
+        Debug.Log(newPositionPlayer.x); 
     }
 
     private void OnCollisionEnter(Collision collisionInfo)
