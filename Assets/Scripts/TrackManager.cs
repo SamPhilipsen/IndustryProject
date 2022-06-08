@@ -1,7 +1,6 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
@@ -10,14 +9,15 @@ public class TrackManager : MonoBehaviour
 {
     [SerializeField] Offset offsetScript;
     [SerializeField] private CinemachineDollyCart cart;
-    [SerializeField] private CinemachineSmoothPath[] alternativeTracks1;
+    [SerializeField] List<CinemachineSmoothPath> alternativeTracks1;
 
     private CinemachineSmoothPath track;
 
-    private CinemachineSmoothPath.Waypoint[] activePath;
-    private CinemachineSmoothPath.Waypoint[] originalPath;
-    private CinemachineSmoothPath.Waypoint[] activeAltPath;
-    private CinemachineSmoothPath[] alternativeTracks = new CinemachineSmoothPath[0];
+    private List<CinemachineSmoothPath.Waypoint> activePath;
+    private List<CinemachineSmoothPath.Waypoint> originalPath;
+    private List<CinemachineSmoothPath.Waypoint> activeAltPath;
+    //private CinemachineSmoothPath[] alternativeTracks = new CinemachineSmoothPath[0];
+    private List<CinemachineSmoothPath> alternativeTracks;
 
     [NonSerialized]
     public string switchingTracks;
@@ -27,16 +27,19 @@ public class TrackManager : MonoBehaviour
     void Start()
     {
         track = GetComponentInParent<CinemachineSmoothPath>();
+        activePath = new List<CinemachineSmoothPath.Waypoint>();
+        originalPath = new List<CinemachineSmoothPath.Waypoint>();
+        activeAltPath = new List<CinemachineSmoothPath.Waypoint>();
+        alternativeTracks = new List<CinemachineSmoothPath>();
 
-        activePath = track.m_Waypoints;
+        activePath.AddRange(track.m_Waypoints);
         onAltTrack = false;
         currentWaypoint = 0;
         switchingTracks = "forward";
 
         foreach (CinemachineSmoothPath path in alternativeTracks1)
         {
-            ArrayUtility.Add(ref alternativeTracks, path);
-            Debug.Log(alternativeTracks);
+            alternativeTracks.Add(path);
         }
 
         foreach (CinemachineSmoothPath path in alternativeTracks)
@@ -59,7 +62,7 @@ public class TrackManager : MonoBehaviour
         CinemachineSmoothPath.Waypoint waypoint = new CinemachineSmoothPath.Waypoint();
         waypoint.position = track.transform.InverseTransformPoint(waypointPos);
         waypoint.roll = 0;
-        for (int i = 0; i < activePath.Length; i++)
+        for (int i = 0; i < activePath.Count; i++)
         {
             float distanceBetweenPoints = Vector3.Distance(transform.TransformPoint(activePath[i].position), waypointPos);
             if (distanceBetweenPoints < closestDistance)
@@ -94,18 +97,17 @@ public class TrackManager : MonoBehaviour
         else
             newWaypointIndex = closestIndex;
 
-        ArrayUtility.Insert(ref activePath, newWaypointIndex, waypoint);
+        activePath.Insert(newWaypointIndex, waypoint);
     }
 
     void Update()
     {
-        track.m_Waypoints = activePath;
-        Debug.Log("switchingTracks :" + switchingTracks);
+        track.m_Waypoints = activePath.ToArray();
 
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
         if (cart.m_Position >= currentWaypoint + 0.8)
         {
-            if (currentWaypoint == activePath.Length - 1)
+            if (currentWaypoint == activePath.Count - 1)
             {
                 activePath = originalPath;
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -135,7 +137,7 @@ public class TrackManager : MonoBehaviour
 
     void CheckIfCartEnd()
     {
-        if (Mathf.Round(cart.m_Position) == activeAltPath.Length - 1)
+        if (Mathf.Round(cart.m_Position) == activeAltPath.Count - 1)
         {
             onAltTrack = false;
             activeAltPath = null;
@@ -148,7 +150,7 @@ public class TrackManager : MonoBehaviour
         onAltTrack = true;
         int firstPointIndex = 0; int endPointIndex = 0;
 
-        for (int i = 0; i < activePath.Length; i++)
+        for (int i = 0; i < activePath.Count; i++)
         {
             if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[0].position))
                 firstPointIndex = i;
@@ -156,9 +158,9 @@ public class TrackManager : MonoBehaviour
                 endPointIndex = i;
         }
 
-        CinemachineSmoothPath.Waypoint[] temp = new CinemachineSmoothPath.Waypoint[0];
+        List<CinemachineSmoothPath.Waypoint> temp = new List<CinemachineSmoothPath.Waypoint>();
 
-        for (int i = 0; i < activePath.Length; i++)
+        for (int i = 0; i < activePath.Count; i++)
         {
             if (i > firstPointIndex && i < endPointIndex)
             {
@@ -171,11 +173,11 @@ public class TrackManager : MonoBehaviour
                     switchingPath.m_Waypoints[x].position = switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[x].position);
                     switchingPath.m_Waypoints[x].position = track.transform.InverseTransformPoint(switchingPath.m_Waypoints[x].position);
                 }
-                ArrayUtility.AddRange(ref temp, switchingPath.m_Waypoints);
+                temp.AddRange(switchingPath.m_Waypoints);
             }
-            if (i != firstPointIndex && i != endPointIndex) ArrayUtility.Add(ref temp, activePath[i]);
+            if (i != firstPointIndex && i != endPointIndex) temp.Add(activePath[i]);
         }
-        activeAltPath = switchingPath.m_Waypoints;
+        activeAltPath.AddRange(switchingPath.m_Waypoints);
         activePath = temp;
         switchingPath.InvalidateDistanceCache();
     }
