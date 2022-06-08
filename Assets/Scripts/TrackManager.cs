@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 
 public class TrackManager : MonoBehaviour
 {
-    [SerializeField] bool switchingTracks;
     [SerializeField] Offset offsetScript;
     [SerializeField] private CinemachineDollyCart cart;
     [SerializeField] private CinemachineSmoothPath[] alternativeTracks1;
@@ -20,6 +19,8 @@ public class TrackManager : MonoBehaviour
     private CinemachineSmoothPath.Waypoint[] activeAltPath;
     private CinemachineSmoothPath[] alternativeTracks = new CinemachineSmoothPath[0];
 
+    [NonSerialized]
+    public string switchingTracks;
     private bool onAltTrack;
     private int currentWaypoint;
 
@@ -30,6 +31,7 @@ public class TrackManager : MonoBehaviour
         activePath = track.m_Waypoints;
         onAltTrack = false;
         currentWaypoint = 0;
+        switchingTracks = "forward";
 
         foreach (CinemachineSmoothPath path in alternativeTracks1)
         {
@@ -98,9 +100,7 @@ public class TrackManager : MonoBehaviour
     void Update()
     {
         track.m_Waypoints = activePath;
-
-        if (offsetScript.newPositionPlayer.x >= 2 || offsetScript.newPositionPlayer.x <= -2) switchingTracks = true;
-        else switchingTracks = false;
+        Debug.Log("switchingTracks :" + switchingTracks);
 
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
         if (cart.m_Position >= currentWaypoint + 0.8)
@@ -112,19 +112,22 @@ public class TrackManager : MonoBehaviour
             }
             if (onAltTrack) CheckIfCartEnd();
 
-            if (switchingTracks)
+
+            if (!onAltTrack)
             {
-                if (!onAltTrack)
+                foreach (CinemachineSmoothPath path in alternativeTracks)
                 {
-                    foreach (CinemachineSmoothPath path in alternativeTracks)
+                    try
                     {
-                        try
+                        if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
                         {
-                            if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
+                            if(path.GetComponent<TrackSideController>().trackSide == "left" && switchingTracks == "left")
+                                AAAAAAAAAAAAH(path);
+                            if(path.GetComponent<TrackSideController>().trackSide == "right" && switchingTracks == "right")
                                 AAAAAAAAAAAAH(path);
                         }
-                        catch (IndexOutOfRangeException) { }
                     }
+                    catch (IndexOutOfRangeException) { }
                 }
             }
         }
