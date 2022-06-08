@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Crate : MonoBehaviour, IObjective
 {
-    [SerializeField] GameObject player;
+    //[SerializeField] GameObject player;
     [SerializeField] ParticleSystem particles;
     [SerializeField] Animator animator;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.Equals(player.GetComponent<Collider>()))
+        if (other.gameObject.layer.Equals(7))
         {
             Complete();
             Triggerable triggerable = GetComponentInParent<Triggerable>();

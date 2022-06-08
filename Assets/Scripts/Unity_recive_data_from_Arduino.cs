@@ -22,7 +22,7 @@ using System.Windows;
         [SerializeField] public int direction;
         [SerializeField] public int height;
 
-        void Start()
+    void Start()
         {
             init_serial();
 
@@ -77,7 +77,7 @@ using System.Windows;
                                 {
                                     speed = int.Parse(splitChars[1]);
                                 }
-                                if (splitChars[0] == "Direction")
+                                else if (splitChars[0] == "Direction")
                                 {
                                     direction = int.Parse(splitChars[1]);
                                 }

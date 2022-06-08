@@ -37,15 +37,15 @@ public class Offset : MonoBehaviour
     
     void FixedUpdate()
     {
-        //GetPotValues();
+        GetPotValues();
 
-        //Movement();
+        Movement();
 
-        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
-        {
-            Offsets();
-        }
-        Debug.Log(newPositionPlayer.x); 
+        //if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
+        //{
+        //    Offsets();
+        //}
+        //Debug.Log(newPositionPlayer.x); 
     }
 
     private void OnCollisionEnter(Collision collisionInfo)

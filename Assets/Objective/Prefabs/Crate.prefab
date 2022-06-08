@@ -181,7 +181,7 @@ PrefabInstance:
     - target: {fileID: 5133620413372430138, guid: 4434a38303cae5b488b8b77c032f911e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.04
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5133620413372430138, guid: 4434a38303cae5b488b8b77c032f911e,
         type: 3}
@@ -191,7 +191,7 @@ PrefabInstance:
     - target: {fileID: 5133620413372430138, guid: 4434a38303cae5b488b8b77c032f911e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.72
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5133620413372430138, guid: 4434a38303cae5b488b8b77c032f911e,
         type: 3}
@@ -304,7 +304,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  particles: {fileID: 0}
+  particles: {fileID: 5014816745005908932, guid: bb3ce03d7571e2b4d986c215d7598910,
+    type: 3}
   animator: {fileID: 8650301458904983272}
 --- !u!4 &4553776705851190864 stripped
 Transform:
