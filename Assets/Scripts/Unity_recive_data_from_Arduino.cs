@@ -18,7 +18,7 @@ using System.Windows;
         private Thread receiveThread;
 
         [Header("DolphinValues")]
-        [SerializeField] public int speed;
+        //[SerializeField] public int speed;
         [SerializeField] public int direction;
         [SerializeField] public int height;
 
@@ -73,11 +73,11 @@ using System.Windows;
 
                                 string str = serialPort.ReadLine();
                                 string[] splitChars = str.Split(new char[] { '%', ':', '#' }, StringSplitOptions.RemoveEmptyEntries);
-                                if (splitChars[0] == "Speed")
-                                {
-                                    speed = int.Parse(splitChars[1]);
-                                }
-                                else if (splitChars[0] == "Direction")
+                                //if (splitChars[0] == "Speed")
+                                //{
+                                //    speed = int.Parse(splitChars[1]);
+                                //}
+                                 if (splitChars[0] == "Direction")
                                 {
                                     direction = int.Parse(splitChars[1]);
                                 }

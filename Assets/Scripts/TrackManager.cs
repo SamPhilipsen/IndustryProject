@@ -16,13 +16,15 @@ public class TrackManager : MonoBehaviour
     private List<CinemachineSmoothPath.Waypoint> activePath;
     private List<CinemachineSmoothPath.Waypoint> originalPath;
     private List<CinemachineSmoothPath.Waypoint> activeAltPath;
-    //private CinemachineSmoothPath[] alternativeTracks = new CinemachineSmoothPath[0];
     private List<CinemachineSmoothPath> alternativeTracks;
 
     [NonSerialized]
     public string switchingTracks;
     private bool onAltTrack;
     private int currentWaypoint;
+
+    public delegate void NearingSwitch(bool nearingSwitch);
+    public NearingSwitch nearingSwitch;
 
     void Start()
     {
@@ -112,7 +114,11 @@ public class TrackManager : MonoBehaviour
                 activePath = originalPath;
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
-            if (onAltTrack) CheckIfCartEnd();
+            if (onAltTrack)
+            {
+                CheckIfCartEnd();
+                nearingSwitch(false);
+            }
 
 
             if (!onAltTrack)
@@ -121,6 +127,11 @@ public class TrackManager : MonoBehaviour
                 {
                     try
                     {
+                        if (currentWaypoint + 1 == 1 || currentWaypoint + 1 == 2 || currentWaypoint + 1== 4 || currentWaypoint + 1== 5)
+                            nearingSwitch(true);
+                        else
+                            nearingSwitch(false);
+
                         if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
                         {
                             if(path.GetComponent<TrackSideController>().trackSide == "left" && switchingTracks == "left")

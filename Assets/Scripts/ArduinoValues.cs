@@ -12,14 +12,18 @@ public static class ArduinoValues
 
     public static void GetvaluePotXMovement(float potValue)
     {
-        float value = GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
-        xMovement = (value - (desiredMaxValueMovement / 2)) * 2;
+        DifferentPotValues x = new DifferentPotValues(150f, 280f, 430f);
+
+        float value = GetCalibrateValue(x, potValue);
+        xMovement = (value) * 2;
     }
 
     public static void GetvaluePotYMovement(float potValue)
     {
-        float value = GetCalibrateValue(GlobalPotValues.verticalValues, potValue);
-        yMovement = (value - (desiredMaxValueMovement / 2)) * 2;
+        DifferentPotValues y = new DifferentPotValues(0f, 260f, 520f);
+
+        float value = GetCalibrateValue(y, potValue);
+        yMovement = (value) * 2;
     }
 
     public static float GetValuePotSpeed(float potValue)
@@ -35,13 +39,14 @@ public static class ArduinoValues
 
         if (tempPotValue > differentPotValues.turnoverValue)
         {
-            tempPotValue -= differentPotValues.turnoverValue - differentPotValues.minValue;
-            float tempMaxValue = differentPotValues.maxValue - differentPotValues.turnoverValue - differentPotValues.minValue;
+            tempPotValue -= differentPotValues.turnoverValue;
+            float tempMaxValue = differentPotValues.maxValue - differentPotValues.turnoverValue;
             i = tempPotValue / tempMaxValue;
         }
         else if (tempPotValue < differentPotValues.turnoverValue)
         {
             tempPotValue -= differentPotValues.minValue;
+            tempPotValue = differentPotValues.turnoverValue - tempPotValue;
             float tempTurnoverValue = differentPotValues.turnoverValue - differentPotValues.minValue;
             i = tempPotValue / tempTurnoverValue * -1f;
         }

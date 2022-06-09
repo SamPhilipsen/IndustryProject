@@ -48,33 +48,6 @@ public class Offset : MonoBehaviour
         //Debug.Log(newPositionPlayer.x); 
     }
 
-    private void OnCollisionEnter(Collision collisionInfo)
-    {
-        if (collisionInfo.gameObject.layer == layerName)
-        {
-            Debug.Log("Error with collision");
-            Vector2 offsetPlayerPosition = new Vector2(0f, 0f);
-            if (newPositionPlayer.x < 0)
-            {
-                offsetPlayerPosition.x += offsetValue * 2;
-            }
-            if (newPositionPlayer.x > 0)
-            {
-                offsetPlayerPosition.x -= offsetValue * 2;
-            }
-            if (newPositionPlayer.y < 0)
-            {
-                offsetPlayerPosition.y += offsetValue * 2;
-            }
-            if (newPositionPlayer.y > 0)
-            {
-                offsetPlayerPosition.y -= offsetValue * 2;
-            }
-            newPositionPlayer += new Vector3(offsetPlayerPosition.x, offsetPlayerPosition.y, 0);
-            player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
-        }
-    }
-
     //if Arduino is not implemented
     private void Offsets()
     {
@@ -173,7 +146,7 @@ public class Offset : MonoBehaviour
 
     private void GetPotValues()
     {
-        potSpeedValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed;
+        //potSpeedValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed;
         potXValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().direction;
         potYValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().height;
     }
