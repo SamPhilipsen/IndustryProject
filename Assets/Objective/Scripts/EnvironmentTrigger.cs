@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class EnvironmentTrigger : MonoBehaviour
 {
-    [SerializeField] GameObject player;
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.Equals(player.GetComponent<Collider>()))
+        if (other.gameObject.layer.Equals(7))
         {
             Triggerable triggerable = GetComponent<Triggerable>();
             if (triggerable != null)
