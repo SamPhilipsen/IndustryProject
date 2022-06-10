@@ -15,8 +15,8 @@ public class Offset : MonoBehaviour
     [SerializeField] float offsetValue = 0.05f;
     [SerializeField] float maxOffset = 25f;
 
-    private float potXValue = 513f;
-    private float potYValue = 513f;
+    private float potXValue = 512f;
+    private float potYValue = 512f;
     private float potSpeedValue = 5f;
 
     private float baseSpeed;
@@ -37,15 +37,15 @@ public class Offset : MonoBehaviour
     
     void FixedUpdate()
     {
+        //arduino controls
         GetPotValues();
-
         Movement();
 
-        //if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
-        //{
-        //    Offsets();
-        //}
-        //Debug.Log(newPositionPlayer.x); 
+        //arrow controls
+        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
+        {
+            Offsets();
+        }
     }
 
     //if Arduino is not implemented
@@ -93,7 +93,6 @@ public class Offset : MonoBehaviour
                 
         newPositionPlayer.x += offsetX;
         newPositionPlayer.y += offsetY;
-
         CheckOffset();
 
         player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
@@ -116,7 +115,6 @@ public class Offset : MonoBehaviour
 
         newPositionPlayer.x += offsetX;
         newPositionPlayer.y += offsetY;
-
         CheckOffset();
 
         player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
@@ -146,9 +144,19 @@ public class Offset : MonoBehaviour
 
     private void GetPotValues()
     {
-        //potSpeedValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed;
-        potXValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().direction;
-        potYValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().height;
+        if (communicationManager.GetComponent<Unity_recive_data_from_Arduino>().isConnected)
+        {
+            //potSpeedValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed;
+            potXValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().direction;
+            potYValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().height;
+        }
+        else
+        {
+            potSpeedValue = GlobalPotValues.speedValues.turnoverValue;
+            potXValue = GlobalPotValues.horizontalValues.turnoverValue;
+            potYValue = GlobalPotValues.verticalValues.turnoverValue;
+        }
+        
     }
 
 }
