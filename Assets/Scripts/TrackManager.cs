@@ -17,6 +17,7 @@ public class TrackManager : MonoBehaviour
     private List<CinemachineSmoothPath.Waypoint> originalPath;
     private List<CinemachineSmoothPath.Waypoint> activeAltPath;
     private List<CinemachineSmoothPath> alternativeTracks;
+    Dictionary<int, CinemachineSmoothPath> pathCollisionPoints;
 
     [NonSerialized]
     public string switchingTracks;
@@ -33,6 +34,7 @@ public class TrackManager : MonoBehaviour
         originalPath = new List<CinemachineSmoothPath.Waypoint>();
         activeAltPath = new List<CinemachineSmoothPath.Waypoint>();
         alternativeTracks = new List<CinemachineSmoothPath>();
+        pathCollisionPoints = new Dictionary<int, CinemachineSmoothPath>();
 
         activePath.AddRange(track.m_Waypoints);
         onAltTrack = false;
@@ -49,13 +51,16 @@ public class TrackManager : MonoBehaviour
             Vector3 firstWaypointPos, lastWaypointPos;
             firstWaypointPos = path.transform.TransformPoint(path.m_Waypoints[0].position);
             lastWaypointPos = path.transform.TransformPoint(path.m_Waypoints[path.m_Waypoints.Length - 1].position);
-            FindWaypoint(firstWaypointPos);
+
+            int collisionPoint = FindWaypoint(firstWaypointPos);
+            pathCollisionPoints.Add(collisionPoint, path);
+
             FindWaypoint(lastWaypointPos);
         }
         originalPath = activePath;
     }
 
-    void FindWaypoint(Vector3 waypointPos)
+    int FindWaypoint(Vector3 waypointPos)
     {
         float closestDistance = Mathf.Infinity;
         int closestIndex = 0;
@@ -100,19 +105,20 @@ public class TrackManager : MonoBehaviour
             newWaypointIndex = closestIndex;
 
         activePath.Insert(newWaypointIndex, waypoint);
+        return newWaypointIndex;
     }
 
     void Update()
-    {
+    { 
         track.m_Waypoints = activePath.ToArray();
-
         currentWaypoint = (int)Mathf.Floor(cart.m_Position);
-        if (cart.m_Position >= currentWaypoint + 0.8)
+
+        if (cart.m_Position >= currentWaypoint + 0.95)
         {
             if (currentWaypoint == activePath.Count - 1)
             {
                 activePath = originalPath;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             if (onAltTrack)
             {
@@ -123,49 +129,40 @@ public class TrackManager : MonoBehaviour
 
             if (!onAltTrack)
             {
-                foreach (CinemachineSmoothPath path in alternativeTracks)
-                {
-                    try
-                    {
-                        if (currentWaypoint + 1 == 1 || currentWaypoint + 1 == 2 || currentWaypoint + 1== 4 || currentWaypoint + 1== 5)
-                            nearingSwitch(true);
-                        else
-                            nearingSwitch(false);
-
-                        if (transform.TransformPoint(activePath[currentWaypoint + 1].position) == path.transform.TransformPoint(path.m_Waypoints[0].position))
-                        {
-                            if(path.GetComponent<TrackSideController>().trackSide == "left" && switchingTracks == "left")
-                                AAAAAAAAAAAAH(path);
-                            if(path.GetComponent<TrackSideController>().trackSide == "right" && switchingTracks == "right")
-                                AAAAAAAAAAAAH(path);
-                        }
-                    }
-                    catch (IndexOutOfRangeException) { }
-                }
+                CheckSwitchingStatus();
             }
         }
     }
 
-    void CheckIfCartEnd()
+    void CheckSwitchingStatus()
     {
-        if (Mathf.Round(cart.m_Position) == activeAltPath.Count - 1)
+        foreach (KeyValuePair<int, CinemachineSmoothPath> collisionPoint in pathCollisionPoints)
         {
-            onAltTrack = false;
-            activeAltPath = null;
+            if (currentWaypoint == collisionPoint.Key - 2)
+                nearingSwitch(true);
+
+            if(currentWaypoint + 1 == collisionPoint.Key)
+            {
+                CinemachineSmoothPath path = collisionPoint.Value;
+                if (path.GetComponent<TrackSideController>().trackSide == switchingTracks)
+                    AAAAAAAAAAAAH(path);
+                nearingSwitch(false);
+            }
         }
     }
 
     void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath1)
     {
         CinemachineSmoothPath switchingPath = switchingPath1;
+
         onAltTrack = true;
         int firstPointIndex = 0; int endPointIndex = 0;
 
         for (int i = 0; i < activePath.Count; i++)
         {
-            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[0].position))
+            if (transform.TransformPoint(activePath[i].position) == switchingPath1.transform.TransformPoint(switchingPath.m_Waypoints[0].position))
                 firstPointIndex = i;
-            if (transform.TransformPoint(activePath[i].position) == switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position))
+            if (transform.TransformPoint(activePath[i].position) == switchingPath1.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position))
                 endPointIndex = i;
         }
 
@@ -181,7 +178,7 @@ public class TrackManager : MonoBehaviour
             {
                 for (int x = 0; x < switchingPath.m_Waypoints.Length; x++)
                 {
-                    switchingPath.m_Waypoints[x].position = switchingPath.transform.TransformPoint(switchingPath.m_Waypoints[x].position);
+                    switchingPath.m_Waypoints[x].position = switchingPath1.transform.TransformPoint(switchingPath.m_Waypoints[x].position);
                     switchingPath.m_Waypoints[x].position = track.transform.InverseTransformPoint(switchingPath.m_Waypoints[x].position);
                 }
                 temp.AddRange(switchingPath.m_Waypoints);
@@ -191,6 +188,15 @@ public class TrackManager : MonoBehaviour
         activeAltPath.AddRange(switchingPath.m_Waypoints);
         activePath = temp;
         switchingPath.InvalidateDistanceCache();
+    }
+
+    void CheckIfCartEnd()
+    {
+        if (Mathf.Round(cart.m_Position) == activeAltPath.Count - 1)
+        {
+            onAltTrack = false;
+            activeAltPath = null;
+        }
     }
 
 }
