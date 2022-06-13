@@ -1,32 +1,57 @@
-int analogPin1 = A1;
-int analogPin2 = A2;
-int analogPin3 = A3;
+int speedPin = 2;
+int directionPin = A2;
+int updownPin = A1;
 
 String beginToken = "%";
 String divider = ":";
 String endToken = "#";
 
-int val1, val2, val3;
+int val, sensorState, speedVal, directionVal, updownVal, speedAmount;
+
+unsigned long previousMillis = 0;
+const long interval = 5000;
 
 void setup() {
   Serial.begin(9600);
 }
 
 void loop() {
+  directionVal = analogRead(directionPin);
+  updownVal = analogRead(updownPin);
+
   
-  val1 = analogRead(analogPin1);
-  val2 = analogRead(analogPin2);
-  val3 = analogRead(analogPin3);
-  
-  sendMessage();
+  CalculateRPM();
+  SendMessage();
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    SetRPM();
+  }
 }
 
-void sendMessage()
+void CalculateRPM()
 {
-    Serial.println(beginToken + "Speed" + divider + val1 + endToken);
-    delay(10);
-    Serial.println(beginToken + "Direction" + divider + val2 + endToken);
-    delay(10);
-    Serial.println(beginToken + "Height" + divider + val3 + endToken);
-    delay(1000);
+  val = digitalRead(speedPin);
+       if (val != sensorState) {         
+        if (val == LOW) {               
+          speedAmount++;               
+        }
+      }
+      sensorState = val;
+      Serial.println(speedAmount);
+}
+
+void SetRPM()
+{
+  speedVal = speedAmount;
+  speedAmount = 0;
+}
+
+void SendMessage()
+{
+    Serial.println(beginToken + "Speed" + divider + speedVal + endToken);
+    Serial.println(beginToken + "Direction" + divider + directionVal + endToken);
+    Serial.println(beginToken + "Height" + divider + updownVal + endToken);
+    delay(100);
 }
