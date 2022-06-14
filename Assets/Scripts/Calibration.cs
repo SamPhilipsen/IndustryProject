@@ -24,9 +24,15 @@ public class Calibration : MonoBehaviour
     private List<GameObject> speedSlidersList;
 
     private List<float> allValues = new List<float>();
+    private List<string> playerPrefIndex = new List<string>();
 
     private void Awake()
     {
+        int totalIndexes = horizontalSlidersList.Count + verticalSlidersList.Count + speedSlidersList.Count;
+        for (int i = 0; i < totalIndexes; i++)
+        {
+            playerPrefIndex.Add(i.ToString());
+        }
 
         allValues = GetValues();
         SetValues(allValues);
@@ -148,11 +154,10 @@ public class Calibration : MonoBehaviour
         int j = 0;
         for (int i = 0 + (indexSliders * 3); i < (indexSliders + 1) * 3; i++)
         {
-            PlayerPrefs.SetFloat(i.ToString(), values[j].GetComponent<Slider>().value);
+            PlayerPrefs.SetFloat(playerPrefIndex[i], values[j].GetComponent<Slider>().value);
             j++;
         }
         PlayerPrefs.Save();
-
 
     }
 
@@ -161,7 +166,7 @@ public class Calibration : MonoBehaviour
         List<float> values = new List<float>();
         for (int i = 0; i < 9; i++)
         {
-            float value = PlayerPrefs.GetFloat(i.ToString(), -1f);
+            float value = PlayerPrefs.GetFloat(playerPrefIndex[i], -1f);
             values.Add(value);
         }
 
