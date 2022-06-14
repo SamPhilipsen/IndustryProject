@@ -47,7 +47,7 @@ public class Offset : MonoBehaviour
         //Movement();
 
         //arrow controls
-        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
+        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right") || Input.GetKey("w") || Input.GetKey("s") || Input.GetKey("a") || Input.GetKey("d"))
         {
             Offsets();
         }
@@ -58,6 +58,7 @@ public class Offset : MonoBehaviour
     {
         float offsetY = 0f;
         float offsetX = 0f;
+        float targetSpeed = baseSpeed;
                 
         if (Input.GetKey("up") && Input.GetKey("left"))
         {
@@ -96,6 +97,50 @@ public class Offset : MonoBehaviour
             offsetX -= offsetValue;
         }
 
+        ///////////////////////
+        if (Input.GetKey("w") && Input.GetKey("a"))
+        {
+            offsetX -= offsetValue * Mathf.Sqrt(2) / 2;
+            offsetY += offsetValue * Mathf.Sqrt(2) / 2;
+        }
+        else if (Input.GetKey("w") && Input.GetKey("d"))
+        {
+            offsetX += offsetValue * Mathf.Sqrt(2) / 2;
+            offsetY += offsetValue * Mathf.Sqrt(2) / 2;
+        }
+        else if (Input.GetKey("s") && Input.GetKey("a"))
+        {
+            offsetX -= offsetValue * Mathf.Sqrt(2) / 2;
+            offsetY -= offsetValue * Mathf.Sqrt(2) / 2;
+        }
+        else if (Input.GetKey("s") && Input.GetKey("d"))
+        {
+            offsetX += offsetValue * Mathf.Sqrt(2) / 2;
+            offsetY -= offsetValue * Mathf.Sqrt(2) / 2;
+        }
+        else if (Input.GetKey("w"))
+        {
+            offsetY += offsetValue;
+        }
+        else if (Input.GetKey("s"))
+        {
+            offsetY -= offsetValue;
+        }
+        else if (Input.GetKey("d"))
+        {
+            offsetX += offsetValue;
+        }
+        else if (Input.GetKey("a"))
+        {
+            offsetX -= offsetValue;
+        }
+        /////////////////////
+
+        if (Input.GetKey("space"))
+        {
+            targetSpeed *= 3f;
+        }
+
         PlayerRotation(offsetX, offsetY);
 
         newPositionPlayer.x += offsetX;
@@ -103,6 +148,7 @@ public class Offset : MonoBehaviour
         CheckOffset();
 
         player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
+        trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed = targetSpeed;
     }
 
     //if Arduino is implemented
