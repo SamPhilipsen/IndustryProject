@@ -164,7 +164,7 @@ public class ObjectiveGroup : MonoBehaviour
         }
     }
 }
-
+/*
 [CustomEditor(typeof(ObjectiveGroup))]
 public class ObjectiveGroupGUIEditor : Editor
 {
@@ -179,3 +179,4 @@ public class ObjectiveGroupGUIEditor : Editor
         }
     }
 }
+*/
