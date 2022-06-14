@@ -11,9 +11,14 @@ public class Offset : MonoBehaviour
     GameObject player;
     [SerializeField]
     GameObject communicationManager;
+    [SerializeField]
+    GameObject playerModel;
 
     [SerializeField] float offsetValue = 0.05f;
     [SerializeField] float maxOffset = 25f;
+
+    [SerializeField] float rotateScale = 0.5f;
+    [SerializeField] float maxRotation = 20f;
 
     private float potXValue = 512f;
     private float potYValue = 512f;
@@ -38,8 +43,8 @@ public class Offset : MonoBehaviour
     void FixedUpdate()
     {
         //arduino controls
-        GetPotValues();
-        Movement();
+        //GetPotValues();
+        //Movement();
 
         //arrow controls
         if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
@@ -90,7 +95,9 @@ public class Offset : MonoBehaviour
         {
             offsetX -= offsetValue;
         }
-                
+
+        PlayerRotation(offsetX, offsetY);
+
         newPositionPlayer.x += offsetX;
         newPositionPlayer.y += offsetY;
         CheckOffset();
@@ -111,6 +118,8 @@ public class Offset : MonoBehaviour
         offsetX += offsetValue * ArduinoValues.xMovement;
         offsetY += offsetValue * ArduinoValues.yMovement;
 
+        PlayerRotation(offsetX, offsetY);
+
         float targetSpeed = baseSpeed; //* ArduinoValues.GetValuePotSpeed(potSpeedValue);
 
         newPositionPlayer.x += offsetX;
@@ -119,6 +128,95 @@ public class Offset : MonoBehaviour
 
         player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
         trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed = targetSpeed;
+    }
+
+    private void PlayerRotation(float offsetX, float offsetY)
+    {
+        Quaternion newRotation = playerModel.transform.localRotation;
+
+        //switch (offsetX)
+        //{
+        //    case < 0:
+        //        if (playerModel.transform.localRotation.x < 0)
+        //        {
+        //            newRotation.x += 2 * rotateScale;
+        //        }
+        //        newRotation.x += rotateScale;
+        //        break;
+        //    case > 0:
+        //        if (playerModel.transform.localRotation.x > 0)
+        //        {
+        //            newRotation.x += 2 * -rotateScale;
+        //        }
+        //        newRotation.x += -rotateScale;
+        //        break;
+        //    default:
+        //        break;
+        //}
+
+        //switch (offsetY)
+        //{
+        //    case < 0:
+        //        if (playerModel.transform.localRotation.z > 0)
+        //        {
+        //            newRotation.z += 2 * -rotateScale;
+        //            break;
+        //        }
+        //        newRotation.z += -rotateScale;
+        //        break;
+        //    case > 0:
+        //        if (playerModel.transform.localRotation.z < 0)
+        //        {
+        //            newRotation.z += 2 * rotateScale;
+        //            break;
+        //        }
+        //        newRotation.z += rotateScale;
+        //        break;
+        //    default:
+        //        break;
+        //}
+
+        //newRotation.x = Mathf.Clamp(newRotation.x, -maxRotation, maxRotation);
+        //newRotation.z = Mathf.Clamp(newRotation.z, -maxRotation, maxRotation);
+
+        //if (newRotation.x > maxRotation)
+        //{
+        //    newRotation.x = maxRotation;
+        //}
+        //if (newRotation.x < maxRotation)
+        //{
+        //    newRotation.x = -maxRotation;
+        //}
+        //if (newRotation.z > maxRotation)
+        //{
+        //    newRotation.z = maxRotation;
+        //}
+        //if (newRotation.z < maxRotation)
+        //{
+        //    newRotation.z = -maxRotation;
+        //}
+
+        if (offsetX > 0)
+        {
+            newRotation.z = -maxRotation;
+        }
+        if (offsetX < 0)
+        {
+            newRotation.z = maxRotation;
+        }
+        if (offsetY > 0)
+        {
+            newRotation.x = -maxRotation;
+        }
+        if (offsetY < 0)
+        {
+            newRotation.x = maxRotation;
+        }
+
+        playerModel.transform.localRotation = Quaternion.Euler(newRotation.x, newRotation.y, newRotation.z).normalized;
+
+        //Vector3 rot = new Vector3(newRotation.x, newRotation.y, newRotation.z);
+        //playerModel.transform.Rotate(rot, Space.Self);
     }
 
     //check if the max offset has been reached else set the offset to the max offset
