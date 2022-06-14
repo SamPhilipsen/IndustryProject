@@ -146,16 +146,17 @@ public class TrackManager : MonoBehaviour
 
     void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath1)
     {
-        CinemachineSmoothPath switchingPath = Instantiate(switchingPath1);
+        GameObject switchingPath = Instantiate(switchingPath1.gameObject);
+        CinemachineSmoothPath.Waypoint[] waypoints = switchingPath.GetComponent<CinemachineSmoothPath>().m_Waypoints;
 
         onAltTrack = true;
         int firstPointIndex = 0; int endPointIndex = 0;
 
         for (int i = 0; i < activePath.Count; i++)
         {
-            if (transform.TransformPoint(activePath[i].position) == switchingPath1.transform.TransformPoint(switchingPath.m_Waypoints[0].position))
+            if (transform.TransformPoint(activePath[i].position) == switchingPath1.transform.TransformPoint(waypoints[0].position))
                 firstPointIndex = i;
-            if (transform.TransformPoint(activePath[i].position) == switchingPath1.transform.TransformPoint(switchingPath.m_Waypoints[switchingPath.m_Waypoints.Length - 1].position))
+            if (transform.TransformPoint(activePath[i].position) == switchingPath1.transform.TransformPoint(waypoints[waypoints.Length - 1].position))
                 endPointIndex = i;
         }
 
@@ -169,16 +170,17 @@ public class TrackManager : MonoBehaviour
             }
             if (i == firstPointIndex)
             {
-                for (int x = 0; x < switchingPath.m_Waypoints.Length; x++)
+                for (int x = 0; x < waypoints.Length; x++)
                 {
-                    switchingPath.m_Waypoints[x].position = switchingPath1.transform.TransformPoint(switchingPath.m_Waypoints[x].position);
-                    switchingPath.m_Waypoints[x].position = track.transform.InverseTransformPoint(switchingPath.m_Waypoints[x].position);
+                    waypoints[x].position = switchingPath1.transform.TransformPoint(waypoints[x].position);
+                    waypoints[x].position = track.transform.InverseTransformPoint(waypoints[x].position);
                 }
-                temp.AddRange(switchingPath.m_Waypoints);
+                temp.AddRange(waypoints);
             }
             if (i != firstPointIndex && i != endPointIndex) temp.Add(activePath[i]);
         }
-        endOfAltTrackWaypoint = currentWaypoint + switchingPath.m_Waypoints.Length;
+        endOfAltTrackWaypoint = currentWaypoint + waypoints.Length;
+        Destroy(switchingPath);
         activePath = temp;
     }
 
