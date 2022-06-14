@@ -11,7 +11,7 @@ public class Hoop : MonoBehaviour, IObjective
 
     private void Awake()
     {
-        this.normalMaterial = GetComponent<Material>();
+        normalMaterial = GetComponent<MeshRenderer>().material;
     }
 
     private void OnTriggerEnter(Collider other)
