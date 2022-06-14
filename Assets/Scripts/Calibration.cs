@@ -126,11 +126,11 @@ public class Calibration : MonoBehaviour
     private void SetGlobalValues()
     {
         //horizontal
-        GlobalPotValues.horizontalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
+        GlobalPotValues.horizontalValues = new DifferentPotValues(horizontalSlidersList[0].GetComponent<Slider>().value, horizontalSlidersList[1].GetComponent<Slider>().value, horizontalSlidersList[2].GetComponent<Slider>().value);
         //vertical
-        GlobalPotValues.horizontalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
+        GlobalPotValues.verticalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
         //speed
-        GlobalPotValues.horizontalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
+        GlobalPotValues.speedValues = new DifferentPotValues(speedSlidersList[0].GetComponent<Slider>().value, speedSlidersList[1].GetComponent<Slider>().value, speedSlidersList[2].GetComponent<Slider>().value);
     }
 
     private void SetValues(List<float> values)

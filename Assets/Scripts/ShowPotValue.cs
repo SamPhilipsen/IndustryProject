@@ -20,7 +20,10 @@ public class ShowPotValue : MonoBehaviour
     {
         if (communicationManager.GetComponent<Unity_recive_data_from_Arduino>() == true)
         {
-            SetText();
+            if (communicationManager.GetComponent<Unity_recive_data_from_Arduino>().isConnected)
+            {
+                SetText();
+            }            
         }        
     }
 
@@ -34,9 +37,9 @@ public class ShowPotValue : MonoBehaviour
             case 1://Vertical
                 text.text = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().height.ToString();
                 break;
-            //case 2://Speed
-            //    text.text = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed.ToString();
-            //    break;
+            case 2://Speed
+                text.text = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed.ToString();
+                break;
             default:
                 break;
         }
