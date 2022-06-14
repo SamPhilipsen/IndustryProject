@@ -178,7 +178,10 @@ public class Offset : MonoBehaviour
 
     private void PlayerRotation(float offsetX, float offsetY)
     {
-        Quaternion newRotation = playerModel.transform.localRotation;
+        Quaternion newRotation = new Quaternion();
+        newRotation.x = playerModel.transform.localRotation.x;
+        newRotation.y = playerModel.transform.localRotation.y;
+        newRotation.z = playerModel.transform.localRotation.z;
 
         //switch (offsetX)
         //{
@@ -259,7 +262,8 @@ public class Offset : MonoBehaviour
             newRotation.x = maxRotation;
         }
 
-        playerModel.transform.localRotation = Quaternion.Euler(newRotation.x, newRotation.y, newRotation.z).normalized;
+        playerModel.transform.localRotation = Quaternion.RotateTowards(playerModel.transform.localRotation, Quaternion.Euler(newRotation.x, newRotation.y, newRotation.z).normalized, 100f * Time.deltaTime);
+        //Debug.Log(playerModel.transform.localRotation);
 
         //Vector3 rot = new Vector3(newRotation.x, newRotation.y, newRotation.z);
         //playerModel.transform.Rotate(rot, Space.Self);
@@ -290,7 +294,7 @@ public class Offset : MonoBehaviour
     {
         if (communicationManager.GetComponent<Unity_recive_data_from_Arduino>().isConnected)
         {
-            //potSpeedValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed;
+            potSpeedValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().speed;
             potXValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().direction;
             potYValue = communicationManager.GetComponent<Unity_recive_data_from_Arduino>().height;
         }
