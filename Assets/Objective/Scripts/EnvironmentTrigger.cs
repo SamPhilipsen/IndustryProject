@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnvironmentTrigger : MonoBehaviour, IObjective
 {
+    [SerializeField] List<Animator> animators;
+
     public void Complete()
     {
         
@@ -16,7 +18,11 @@ public class EnvironmentTrigger : MonoBehaviour, IObjective
 
     public void Reset()
     {
-        
+        foreach(Animator animator in animators)
+        {
+            animator.Rebind();
+            animator.Update(0f);
+        }
     }
 
     public void SpawnParticles()
