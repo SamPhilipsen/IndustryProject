@@ -297,6 +297,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4295676821897478693, guid: 4434a38303cae5b488b8b77c032f911e,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4295676821897478693, guid: 4434a38303cae5b488b8b77c032f911e,
+        type: 3}
       propertyPath: m_FadeMode
       value: 0
       objectReference: {fileID: 0}
