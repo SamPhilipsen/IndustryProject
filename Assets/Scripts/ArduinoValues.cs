@@ -12,18 +12,12 @@ public static class ArduinoValues
 
     public static void GetvaluePotXMovement(float potValue)
     {
-        DifferentPotValues x = new DifferentPotValues(150f, 280f, 430f);
-
-        float value = GetCalibrateValue(x, potValue);
-        xMovement = (value) * 2;
+        xMovement = GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
     }
 
     public static void GetvaluePotYMovement(float potValue)
     {
-        DifferentPotValues y = new DifferentPotValues(0f, 260f, 520f);
-
-        float value = GetCalibrateValue(y, potValue);
-        yMovement = (value) * 2;
+        yMovement = GetCalibrateValue(GlobalPotValues.verticalValues, potValue);
     }
 
     public static float GetValuePotSpeed(float potValue)

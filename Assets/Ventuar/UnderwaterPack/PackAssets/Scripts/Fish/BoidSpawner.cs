@@ -69,7 +69,7 @@ namespace LowPolyUnderwaterPack
                 for (int i = 0; i < spawnNumber; i++)
                 {
                     // Choose a random fish type from a list of possible spawnable fish
-                    prefab = validPrefabs[Random.Range(0, validPrefabs.Count)];
+                    prefab = validPrefabs[Random.Range(0, validPrefabs.Count - 1)];
                     boid = Instantiate(prefab, transform.position + Random.insideUnitSphere * spawnRadius, Random.rotation, transform);
 
                     // Send relevent data to the instantiated boid
