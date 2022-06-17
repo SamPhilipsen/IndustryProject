@@ -10,6 +10,11 @@ public class ButtonHandler : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     public void ExitGame()
     {
         Application.Quit();

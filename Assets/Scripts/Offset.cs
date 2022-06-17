@@ -24,6 +24,10 @@ public class Offset : MonoBehaviour
     public Vector3 newPositionPlayer = new Vector3();
     [SerializeField]
     private LayerMask layerName;
+    [SerializeField]
+    private GameObject canvas;
+    [SerializeField]
+    private PauseHandler pauseHandler;
 
     private void Awake()
     {
@@ -35,16 +39,28 @@ public class Offset : MonoBehaviour
         baseSpeed = trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed;
     }
     
-    void FixedUpdate()
+    void Update()
     {
         GetPotValues();
 
         Movement();
 
-        //if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right"))
-        //{
-        //    Offsets();
-        //}
+        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right") || Input.GetKey("w") || Input.GetKey("s") || Input.GetKey("a") || Input.GetKey("d") || Input.GetKey("space"))
+        {
+            Offsets();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            canvas.SetActive(true);
+            if (pauseHandler.paused)
+            {
+                pauseHandler.Unpause();
+            }
+            else
+            {
+                pauseHandler.Pause();
+            }
+        }
         //Debug.Log(newPositionPlayer.x); 
     }
 
