@@ -32,23 +32,38 @@ public class AreaLightScript : MonoBehaviour
         {
             if(areaName == area.name)
             {
-                dirLight.color = area.lightColor;
-                dirLight.intensity = area.lightIntensity;
-                RenderSettings.fogColor = area.fogColor;
+                StopCoroutine("LightRoutine");
+                //dirLight.color = area.lightColor;
+                //dirLight.intensity = area.lightIntensity;
+                //RenderSettings.fogColor = area.fogColor;
 
-                //StartCoroutine(LightRoutine(area.lightIntensity, area.lightColor));
+                StartCoroutine(LightRoutine(area.lightIntensity, area.lightColor, area.fogColor));
             }
         }
     }
 
-    //private IEnumerator LightRoutine(float lightIntensity, Color lightColor)
-    //{
-    //    while (timeElapsed < lightChangeSpeed)
-    //    {
-    //        dirLight.color = Color.Lerp(dirLight.color, lightColor, timeElapsed / lightChangeSpeed);
-    //        dirLight.intensity = Mathf.Lerp(dirLight.intensity, lightIntensity, timeElapsed / lightChangeSpeed);
-    //        timeElapsed += Time.deltaTime;
-    //    }
-    //    return null;
-    //}
+    public void Update()
+    {
+        timeElapsed += Time.deltaTime;
+        if(timeElapsed > lightChangeSpeed + 1f)
+        {
+            StopCoroutine("LightRoutine");
+        }
+    }
+
+    private IEnumerator LightRoutine(float lightIntensity, Color lightColor, Color fogColor)
+    {
+        timeElapsed = 0f;
+        while (timeElapsed < lightChangeSpeed)
+        {
+            dirLight.color = Color.Lerp(dirLight.color, lightColor, timeElapsed / lightChangeSpeed);
+            dirLight.intensity = Mathf.Lerp(dirLight.intensity, lightIntensity, timeElapsed / lightChangeSpeed);
+            RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, fogColor, timeElapsed / lightChangeSpeed);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        Debug.Log("Loop Done");
+        yield return null;
+    }
 }
