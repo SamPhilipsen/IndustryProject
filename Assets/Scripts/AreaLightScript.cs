@@ -33,9 +33,6 @@ public class AreaLightScript : MonoBehaviour
             if(areaName == area.name)
             {
                 StopCoroutine("LightRoutine");
-                //dirLight.color = area.lightColor;
-                //dirLight.intensity = area.lightIntensity;
-                //RenderSettings.fogColor = area.fogColor;
 
                 StartCoroutine(LightRoutine(area.lightIntensity, area.lightColor, area.fogColor));
             }
