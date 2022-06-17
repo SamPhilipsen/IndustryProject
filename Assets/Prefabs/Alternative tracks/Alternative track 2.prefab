@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4911747279403485642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4911747279403485643}
+  - component: {fileID: 4911747279403485644}
+  - component: {fileID: 4911747279403485635}
+  m_Layer: 0
+  m_Name: Alternative track 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &4911747279403485643
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911747279403485642}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -167.71002, y: 104.64, z: -114.51001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4911747279403485644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911747279403485642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0.851668, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.7735849, g: 0.7434813, b: 0.25178, a: 1}
+    width: 2.53
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: 1.6105652, y: -1.2540398, z: -2.5281372}
+    roll: 0
+  - position: {x: 38.78128, y: -1.3407211, z: -21.785645}
+    roll: 0
+  - position: {x: 57.405914, y: 0.49370575, z: -58.404266}
+    roll: 0
+  - position: {x: 74.989075, y: 0.9874115, z: -128.09851}
+    roll: 0
+  - position: {x: 66.13547, y: -0.020584106, z: -177.78268}
+    roll: 0
+  - position: {x: 70.746796, y: -37.440495, z: -231.10304}
+    roll: 0
+  - position: {x: 39.025757, y: -48.044956, z: -255.98491}
+    roll: 0
+--- !u!114 &4911747279403485635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911747279403485642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e8b9859c601b84f947549c4fd9a4ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trackSide: right
