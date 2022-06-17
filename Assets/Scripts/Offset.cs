@@ -27,6 +27,8 @@ public class Offset : MonoBehaviour
     private float potSpeedValue = 5f;
 
     private float baseSpeed;
+    [SerializeField]
+    private float avoidSpeed = 1f;
 
     public Vector3 newPositionPlayer = new Vector3();
     [SerializeField]
@@ -53,17 +55,18 @@ public class Offset : MonoBehaviour
     
     void FixedUpdate()
     {
-        //arduino controls
-        //GetPotValues();
-        //Movement();
-
-        //arrow controls
-        if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right") || Input.GetKey("w") || Input.GetKey("s") || Input.GetKey("a") || Input.GetKey("d") || Input.GetKey("space"))
+        if (!CheckCollision())
         {
-            Offsets();
+            //arduino controls
+            //GetPotValues();
+            //Movement();
+            //arrow controls
+            if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right") || Input.GetKey("w") || Input.GetKey("s") || Input.GetKey("a") || Input.GetKey("d") || Input.GetKey("space"))
+            {
+                Offsets();
+            }
         }
 
-        CheckCollision();
     }
 
     //if Arduino is not implemented
@@ -160,8 +163,8 @@ public class Offset : MonoBehaviour
         newPositionPlayer.y += offsetY;
         CheckOffset();
 
-        player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
         trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed = targetSpeed;
+        SetMovement();
     }
 
     //if Arduino is implemented
@@ -185,8 +188,13 @@ public class Offset : MonoBehaviour
         newPositionPlayer.y += offsetY;
         CheckOffset();
 
-        player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
         trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed = targetSpeed;
+        SetMovement();
+    }
+
+    private void SetMovement()
+    {
+        player.transform.localPosition = new Vector3(newPositionPlayer.x, newPositionPlayer.y);
     }
 
     private void PlayerRotation(float offsetX, float offsetY)
@@ -319,7 +327,7 @@ public class Offset : MonoBehaviour
         }        
     }
 
-    private void CheckCollision()
+    private bool CheckCollision()
     {
         int layerMask = LayerMask.GetMask(layerName);
         List<RaycastHit> colliding = new();
@@ -328,68 +336,99 @@ public class Offset : MonoBehaviour
         float newRadius = sphereRadius / Mathf.Sqrt(2);
         float V3Radius = newRadius / Mathf.Sqrt(2);
 
+        Vector3 moveSpeed = Vector3.zero;
+
         // Check all directions for a collision
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, 0)), out RaycastHit hitInfo1, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo1);
+            moveSpeed.x += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, sphereRadius, 0)), out RaycastHit hitInfo2, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo2);
+            moveSpeed.y += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, 0, sphereRadius)), out RaycastHit hitInfo3, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo3);
+            moveSpeed.z += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, 0, 0)), out RaycastHit hitInfo4, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo4);
+            moveSpeed.x -= avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, -sphereRadius, 0)), out RaycastHit hitInfo5, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo5);
+            moveSpeed.y -= avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, newRadius, 0)), out RaycastHit hitInfo6, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo6);
+            moveSpeed.x += avoidSpeed;
+            moveSpeed.y += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, -newRadius, 0)), out RaycastHit hitInfo7, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo7);
+            moveSpeed.x -= avoidSpeed;
+            moveSpeed.y -= avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, newRadius, 0)), out RaycastHit hitInfo8, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo8);
+            moveSpeed.x -= avoidSpeed;
+            moveSpeed.y += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, -newRadius, 0)), out RaycastHit hitInfo9, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo9);
+            moveSpeed.x += avoidSpeed;
+            moveSpeed.y -= avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(V3Radius, newRadius, V3Radius)), out RaycastHit hitInfo10, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo10);
+            moveSpeed.x += avoidSpeed;
+            moveSpeed.y += avoidSpeed;
+            moveSpeed.z += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, newRadius, V3Radius)), out RaycastHit hitInfo11, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo11);
+            moveSpeed.x -= avoidSpeed;
+            moveSpeed.y += avoidSpeed;
+            moveSpeed.z += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(V3Radius, -newRadius, V3Radius)), out RaycastHit hitInfo12, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo12);
+            moveSpeed.x += avoidSpeed;
+            moveSpeed.y -= avoidSpeed;
+            moveSpeed.z += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, -newRadius, V3Radius)), out RaycastHit hitInfo13, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo13);
+            moveSpeed.x -= avoidSpeed;
+            moveSpeed.y -= avoidSpeed;
+            moveSpeed.z += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, 0, newRadius)), out RaycastHit hitInfo14, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo14);
+            moveSpeed.x += avoidSpeed;
+            moveSpeed.z += avoidSpeed;
         }
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, 0, newRadius)), out RaycastHit hitInfo15, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo15);
+            moveSpeed.x -= avoidSpeed;
+            moveSpeed.z += avoidSpeed;
         }
-
+        
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, 0)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, sphereRadius, 0)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, 0, sphereRadius)), Color.red);
@@ -405,7 +444,7 @@ public class Offset : MonoBehaviour
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, -newRadius, V3Radius)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, 0, newRadius)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, 0, newRadius)), Color.red);
-
+        
         if (colliding.Count > 0)
         {
             Vector3 correctionDirection = Vector3.zero;
@@ -417,7 +456,15 @@ public class Offset : MonoBehaviour
             correctionDirection.y = correctionDirection.y / colliding.Count * -1;
             correctionDirection.z = 0;
 
-            player.transform.localPosition = Vector3.MoveTowards(player.transform.localPosition, player.transform.localPosition + correctionDirection, 5f * Time.deltaTime);
+            float speed = moveSpeed.magnitude;
+            Debug.Log(speed);
+
+            newPositionPlayer = Vector3.MoveTowards(player.transform.localPosition, player.transform.localPosition + correctionDirection, speed * Time.deltaTime);
+            SetMovement();
+            ///Debug.Log("Collision");
+            return true;
         }
+        ///Debug.Log("No Collision");
+        return false;
     }
 }
