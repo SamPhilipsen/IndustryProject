@@ -20,7 +20,7 @@ public class Offset : MonoBehaviour
     [SerializeField] float rotateScale = 0.5f;
     [SerializeField] float maxRotation = 20f;
 
-    [SerializeField] float sphereRadius = 1f;
+    [SerializeField] float raycastDistance = 1f;
 
     private float potXValue = 512f;
     private float potYValue = 512f;
@@ -321,10 +321,103 @@ public class Offset : MonoBehaviour
 
     private void CheckCollision()
     {
-        Debug.Log("check collision");
-        if (Physics.CheckSphere(player.transform.position, sphereRadius, LayerMask.NameToLayer(layerName)))
+        int layerMask = LayerMask.GetMask(layerName);
+        List<RaycastHit> colliding = new();
+
+        float sphereRadius = raycastDistance;
+        float newRadius = sphereRadius / Mathf.Sqrt(2);
+        float V3Radius = newRadius / Mathf.Sqrt(2);
+
+        // Check all directions for a collision
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, 0)), out RaycastHit hitInfo1, sphereRadius, layerMask))
         {
-            Debug.Log("hit terrain");
+            colliding.Add(hitInfo1);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, sphereRadius, 0)), out RaycastHit hitInfo2, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo2);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, 0, sphereRadius)), out RaycastHit hitInfo3, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo3);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, 0, 0)), out RaycastHit hitInfo4, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo4);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, -sphereRadius, 0)), out RaycastHit hitInfo5, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo5);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, newRadius, 0)), out RaycastHit hitInfo6, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo6);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, -newRadius, 0)), out RaycastHit hitInfo7, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo7);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, newRadius, 0)), out RaycastHit hitInfo8, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo8);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, -newRadius, 0)), out RaycastHit hitInfo9, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo9);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(V3Radius, newRadius, V3Radius)), out RaycastHit hitInfo10, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo10);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, newRadius, V3Radius)), out RaycastHit hitInfo11, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo11);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(V3Radius, -newRadius, V3Radius)), out RaycastHit hitInfo12, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo12);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, -newRadius, V3Radius)), out RaycastHit hitInfo13, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo13);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, 0, newRadius)), out RaycastHit hitInfo14, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo14);
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, 0, newRadius)), out RaycastHit hitInfo15, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo15);
+        }
+
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, sphereRadius, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, 0, sphereRadius)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, 0, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, -sphereRadius, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, newRadius, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, -newRadius, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, newRadius, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, -newRadius, 0)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(V3Radius, newRadius, V3Radius)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, newRadius, V3Radius)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(V3Radius, -newRadius, V3Radius)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-V3Radius, -newRadius, V3Radius)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(newRadius, 0, newRadius)), Color.red);
+        Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-newRadius, 0, newRadius)), Color.red);
+
+        if (colliding.Count > 0)
+        {
+            Vector3 correctionDirection = Vector3.zero;
+            foreach (RaycastHit hit in colliding)
+            {
+                correctionDirection += player.transform.InverseTransformPoint(hit.point);
+            }
+            correctionDirection.x = correctionDirection.x / colliding.Count * -1;
+            correctionDirection.y = correctionDirection.y / colliding.Count * -1;
+            correctionDirection.z = 0;
+
+            player.transform.localPosition = Vector3.MoveTowards(player.transform.localPosition, player.transform.localPosition + correctionDirection, 5f * Time.deltaTime);
         }
     }
 }
