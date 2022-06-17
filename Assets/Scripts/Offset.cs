@@ -20,6 +20,8 @@ public class Offset : MonoBehaviour
     [SerializeField] float rotateScale = 0.5f;
     [SerializeField] float maxRotation = 20f;
 
+    [SerializeField] float sphereRadius = 1f;
+
     private float potXValue = 512f;
     private float potYValue = 512f;
     private float potSpeedValue = 5f;
@@ -28,16 +30,25 @@ public class Offset : MonoBehaviour
 
     public Vector3 newPositionPlayer = new Vector3();
     [SerializeField]
-    private LayerMask layerName;
+    private string layerName;
 
     private void Awake()
     {
-        GlobalPotValues.horizontalValues = new DifferentPotValues(0, 512, 1023);
-        GlobalPotValues.verticalValues = new DifferentPotValues(0, 512, 1023);
-        GlobalPotValues.speedValues = new DifferentPotValues(0, 512, 1023);
+        SetGlobalValues();
 
         newPositionPlayer = player.transform.localPosition;
         baseSpeed = trackCart.GetComponent<Cinemachine.CinemachineDollyCart>().m_Speed;
+    }
+
+    private void SetGlobalValues()
+    {
+        List<string> playerPrefIndex = new List<string>();
+        for (int i = 0; i < 9; i++)
+        {
+            playerPrefIndex.Add(i.ToString());
+        }
+
+        PlayerPrefshandler.SetGlobalValues(playerPrefIndex);
     }
     
     void FixedUpdate()
@@ -51,6 +62,8 @@ public class Offset : MonoBehaviour
         {
             Offsets();
         }
+
+        CheckCollision();
     }
 
     //if Arduino is not implemented
@@ -166,7 +179,7 @@ public class Offset : MonoBehaviour
 
         PlayerRotation(offsetX, offsetY);
 
-        float targetSpeed = baseSpeed; //* ArduinoValues.GetValuePotSpeed(potSpeedValue);
+        float targetSpeed = baseSpeed * ArduinoValues.GetValuePotSpeed(potSpeedValue);
 
         newPositionPlayer.x += offsetX;
         newPositionPlayer.y += offsetY;
@@ -303,8 +316,15 @@ public class Offset : MonoBehaviour
             potSpeedValue = GlobalPotValues.speedValues.turnoverValue;
             potXValue = GlobalPotValues.horizontalValues.turnoverValue;
             potYValue = GlobalPotValues.verticalValues.turnoverValue;
-        }
-        
+        }        
     }
 
+    private void CheckCollision()
+    {
+        Debug.Log("check collision");
+        if (Physics.CheckSphere(player.transform.position, sphereRadius, LayerMask.NameToLayer(layerName)))
+        {
+            Debug.Log("hit terrain");
+        }
+    }
 }

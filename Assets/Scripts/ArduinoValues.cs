@@ -5,7 +5,7 @@ using UnityEngine;
 public static class ArduinoValues
 {
     private static float desiredMaxValueMovement = 1f;
-    private static float desiredMaxValueSpeed = 4f;
+    private static float desiredMaxValueSpeed = 2.5f;
 
     public static float xMovement;
     public static float yMovement;
@@ -22,7 +22,12 @@ public static class ArduinoValues
 
     public static float GetValuePotSpeed(float potValue)
     {
-        return desiredMaxValueSpeed / GetCalibrateValue(GlobalPotValues.speedValues, potValue) + 1;
+        float speedPercentage = (potValue - GlobalPotValues.speedValues.minValue) / (GlobalPotValues.speedValues.maxValue - GlobalPotValues.speedValues.minValue);
+        if (speedPercentage <= 0)
+        {
+            speedPercentage = 0;
+        }
+        return desiredMaxValueSpeed * (speedPercentage + 0.25f);
     }
 
     private static float GetCalibrateValue(DifferentPotValues differentPotValues, float potValue)
