@@ -34,6 +34,12 @@ public class Offset : MonoBehaviour
     [SerializeField]
     private string layerName;
 
+    [Header("Obstacle avoidance")]
+    [SerializeField] [Tooltip("The avoiding speed is multiplied by this 1 + colliders hit / multiplier")] float correctionSpeedMultiplier;
+    [SerializeField] [Tooltip("Directions the raycast check in on the x axis")] int[] x;
+    [SerializeField] [Tooltip("Directions the raycast check in on the y axis")] int[] y;
+    [SerializeField] [Tooltip("Directions the raycast check in on the z axis")] int[] z;
+
     private void Awake()
     {
         SetGlobalValues();
@@ -339,6 +345,28 @@ public class Offset : MonoBehaviour
         Vector3 moveSpeed = Vector3.zero;
 
         // Check all directions for a collision
+        foreach(int x in x)
+        {
+            foreach(int y in y)
+            {
+                foreach(int z in z)
+                {
+                    if (x == 0 && y == 0 && z == 0)
+                    {
+                        continue;
+                    }
+                    RaycastHit hitInfo;
+                    if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(x * sphereRadius, y * sphereRadius, z * sphereRadius)), out hitInfo, sphereRadius, layerMask))
+                    {
+                        colliding.Add(hitInfo);
+                        moveSpeed.x += x;
+                        moveSpeed.y += y;
+                        moveSpeed.z += z;
+                    }
+                }
+            }
+        }
+        /*
         if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, 0)), out RaycastHit hitInfo1, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo1);
@@ -416,19 +444,32 @@ public class Offset : MonoBehaviour
             moveSpeed.y -= avoidSpeed;
             moveSpeed.z += avoidSpeed;
         }
-        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, sphereRadius)), out RaycastHit hitInfo14, sphereRadius, layerMask))
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, sphereRadius, sphereRadius)), out RaycastHit hitInfo14, sphereRadius, layerMask))
         {
             colliding.Add(hitInfo14);
+            moveSpeed.y += avoidSpeed;
+            moveSpeed.z += avoidSpeed;
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(0, -sphereRadius, sphereRadius)), out RaycastHit hitInfo15, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo15);
+            moveSpeed.y -= avoidSpeed;
+            moveSpeed.z += avoidSpeed;
+        }
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, sphereRadius)), out RaycastHit hitInfo16, sphereRadius, layerMask))
+        {
+            colliding.Add(hitInfo16);
             moveSpeed.x += avoidSpeed;
             moveSpeed.z += avoidSpeed;
         }
-        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, 0, sphereRadius)), out RaycastHit hitInfo15, sphereRadius, layerMask))
+        if (Physics.Raycast(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, 0, sphereRadius)), out RaycastHit hitInfo17, sphereRadius, layerMask))
         {
-            colliding.Add(hitInfo15);
+            colliding.Add(hitInfo17);
             moveSpeed.x -= avoidSpeed;
             moveSpeed.z += avoidSpeed;
         }
-        
+        */
+
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, 0)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, sphereRadius, 0)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(0, 0, sphereRadius)), Color.red);
@@ -456,8 +497,7 @@ public class Offset : MonoBehaviour
             correctionDirection.y = correctionDirection.y / colliding.Count * -1;
             correctionDirection.z = 0;
 
-            float speed = moveSpeed.magnitude;
-            Debug.Log(speed);
+            float speed = moveSpeed.magnitude * (1 + colliding.Count / correctionSpeedMultiplier);
 
             newPositionPlayer = Vector3.MoveTowards(player.transform.localPosition, player.transform.localPosition + correctionDirection, speed * Time.deltaTime);
             SetMovement();
@@ -467,4 +507,33 @@ public class Offset : MonoBehaviour
         ///Debug.Log("No Collision");
         return false;
     }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.matrix = player.transform.localToWorldMatrix;
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(raycastDistance, 0, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(0, raycastDistance, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(0, 0, raycastDistance));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(-raycastDistance, 0, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(0, -raycastDistance, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(raycastDistance, raycastDistance, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(-raycastDistance, -raycastDistance, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(raycastDistance, -raycastDistance, 0));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(-raycastDistance, raycastDistance, 0));
+        Gizmos.color = Color.blue;
+        float newRadius = raycastDistance / Mathf.Sqrt(2);
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(newRadius, newRadius, newRadius));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(-newRadius, newRadius, newRadius));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(newRadius, -newRadius, newRadius));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(-newRadius, -newRadius, newRadius));
+
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(0, newRadius, newRadius));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(0, -newRadius, newRadius));
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(raycastDistance, 0, raycastDistance));
+        Gizmos.DrawLine(player.transform.position, player.transform.position + new Vector3(-raycastDistance, 0, raycastDistance));
+
+    }
 }
+
