@@ -46,15 +46,28 @@ public class TrackManager : MonoBehaviour
             firstWaypointPos = path.transform.TransformPoint(path.m_Waypoints[0].position);
             lastWaypointPos = path.transform.TransformPoint(path.m_Waypoints[path.m_Waypoints.Length - 1].position);
 
-            int collisionPoint = FindWaypoint(firstWaypointPos);
-            pathCollisionPoints.Add(collisionPoint, path);
-
-            FindWaypoint(lastWaypointPos);
+            PlaceWaypointOnTrack(firstWaypointPos);
+            PlaceWaypointOnTrack(lastWaypointPos);
         }
+        FindCollisionPoints();
         originalPath = activePath;
     }
+    void FindCollisionPoints()
+    {
+        pathCollisionPoints = new Dictionary<int, CinemachineSmoothPath>();
+        foreach (CinemachineSmoothPath path in alternativeTracks)
+        {
+            int collisionPoint = 0;
+            Vector3 waypointPos = track.transform.InverseTransformPoint(path.transform.TransformPoint(path.m_Waypoints[0].position));
 
-    int FindWaypoint(Vector3 waypointPos)
+            for (int i = 0; i < activePath.Count; i++)
+            {
+                if (activePath[i].position == waypointPos) collisionPoint = i;
+            }
+            pathCollisionPoints.Add(collisionPoint, path);
+        }
+    }
+    void PlaceWaypointOnTrack(Vector3 waypointPos)
     {
         float closestDistance = Mathf.Infinity;
         int closestIndex = 0;
@@ -73,24 +86,26 @@ public class TrackManager : MonoBehaviour
             }
         }
 
-        float distanceBehindClosestPoint;
-        float distanceInfrontClosestPoint;
+        float distanceBehindClosestPoint = 0;
+        float distanceInfrontClosestPoint = 0; 
 
         try
         {
             distanceBehindClosestPoint = Vector3.Distance(activePath[closestIndex - 1].position, waypoint.position);
         }
-        catch (IndexOutOfRangeException)
+        catch (Exception ex)
         {
-            distanceBehindClosestPoint = Vector3.Distance(activePath[0].position, waypoint.position);
+            if(ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException)
+                distanceBehindClosestPoint = Vector3.Distance(activePath[0].position, waypoint.position);
         }
         try
         {
             distanceInfrontClosestPoint = Vector3.Distance(activePath[closestIndex + 1].position, waypoint.position);
         }
-        catch (IndexOutOfRangeException)
+        catch (Exception ex)
         {
-            distanceInfrontClosestPoint = Vector3.Distance(activePath[0].position, waypoint.position);
+            if (ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException)
+                distanceInfrontClosestPoint = Vector3.Distance(activePath[0].position, waypoint.position);
         }
 
         if (distanceBehindClosestPoint - closestDistance > distanceInfrontClosestPoint - closestDistance)
@@ -99,7 +114,6 @@ public class TrackManager : MonoBehaviour
             newWaypointIndex = closestIndex;
 
         activePath.Insert(newWaypointIndex, waypoint);
-        return newWaypointIndex;
     }
 
     void Update()
@@ -138,13 +152,13 @@ public class TrackManager : MonoBehaviour
             {
                 CinemachineSmoothPath path = collisionPoint.Value;
                 if (path.GetComponent<TrackSideController>().trackSide == switchingTracks)
-                    AAAAAAAAAAAAH(path);
+                    SwitchToDifferentTrack(path);
                 nearingSwitch(false);
             }
         }
     }
 
-    void AAAAAAAAAAAAH(CinemachineSmoothPath switchingPath1)
+    void SwitchToDifferentTrack(CinemachineSmoothPath switchingPath1)
     {
         GameObject switchingPath = Instantiate(switchingPath1.gameObject);
         CinemachineSmoothPath.Waypoint[] waypoints = switchingPath.GetComponent<CinemachineSmoothPath>().m_Waypoints;
@@ -182,6 +196,7 @@ public class TrackManager : MonoBehaviour
         endOfAltTrackWaypoint = currentWaypoint + waypoints.Length;
         Destroy(switchingPath);
         activePath = temp;
+        FindCollisionPoints();
     }
 
     void CheckIfCartEnd()

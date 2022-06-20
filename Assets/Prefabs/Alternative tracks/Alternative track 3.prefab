@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8766127524496694482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8766127524496694493}
+  - component: {fileID: 8766127524496694492}
+  - component: {fileID: 8766127524496694495}
+  m_Layer: 0
+  m_Name: Alternative track 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8766127524496694493
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766127524496694482}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -265.6, y: 109.13, z: -279.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8766127524496694492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766127524496694482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0.851668, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.7735849, g: 0.7434813, b: 0.25178, a: 1}
+    width: 2.53
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: 2.6712341, y: -0.087524414, z: -4.760437}
+    roll: 0
+  - position: {x: -19.948792, y: 10.061096, z: 12.3697815}
+    roll: 0
+  - position: {x: -16.27945, y: 27.191109, z: 72.19943}
+    roll: 0
+  - position: {x: 3.8915405, y: 39.2536, z: 105.06116}
+    roll: 0
+  - position: {x: 9.490875, y: 45.561478, z: 133.76639}
+    roll: 0
+  - position: {x: 0.026123047, y: 52.94993, z: 163.79263}
+    roll: 0
+  - position: {x: -29.779663, y: 51.59517, z: 170.8862}
+    roll: 0
+  - position: {x: -52.42044, y: 47.865868, z: 156.22134}
+    roll: 0
+  - position: {x: -52.858124, y: 38.779617, z: 129.5687}
+    roll: 0
+  - position: {x: -34.682556, y: 31.384811, z: 86.41412}
+    roll: 0
+  - position: {x: -43.328888, y: 14.389969, z: 47.905273}
+    roll: 0
+  - position: {x: -62.507004, y: 4.3222466, z: 5.9634705}
+    roll: 0
+  - position: {x: -89.407074, y: 1.8904037, z: -2.555542}
+    roll: 0
+--- !u!114 &8766127524496694495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766127524496694482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e8b9859c601b84f947549c4fd9a4ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trackSide: right
