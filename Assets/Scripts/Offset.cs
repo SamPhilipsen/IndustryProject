@@ -33,6 +33,8 @@ public class Offset : MonoBehaviour
     public Vector3 newPositionPlayer = new Vector3();
     [SerializeField]
     private string layerName;
+    [SerializeField]
+    private PauseHandler pauseHandler;
 
     [Header("Obstacle avoidance")]
     [SerializeField] [Tooltip("The avoiding speed is multiplied by this 1 + colliders hit / multiplier")] float correctionSpeedMultiplier;
@@ -61,6 +63,10 @@ public class Offset : MonoBehaviour
     
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pauseHandler.Pause();
+        }
         if (!CheckCollision())
         {
             //arduino controls

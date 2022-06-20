@@ -7,11 +7,13 @@ public class ButtonHandler : MonoBehaviour
 {
     public void StartGame()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(1);
     }
 
     public void ReturnToMenu()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 
