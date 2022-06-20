@@ -14,7 +14,7 @@ public class Area
 
 public enum areaNames
 {
-    Beach, CoralReef, Cave, SunkenShip, KelpForest
+    Beach, CoralReef, Cave, SunkenShip, KelpForest, Tornado
 }
 
 public class AreaLightScript : MonoBehaviour
