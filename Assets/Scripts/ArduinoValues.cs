@@ -5,26 +5,29 @@ using UnityEngine;
 public static class ArduinoValues
 {
     private static float desiredMaxValueMovement = 1f;
-    private static float desiredMaxValueSpeed = 4f;
+    private static float desiredMaxValueSpeed = 2.5f;
 
     public static float xMovement;
     public static float yMovement;
 
     public static void GetvaluePotXMovement(float potValue)
     {
-        float value = GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
-        xMovement = (value - (desiredMaxValueMovement / 2)) * 2;
+        xMovement = GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
     }
 
     public static void GetvaluePotYMovement(float potValue)
     {
-        float value = GetCalibrateValue(GlobalPotValues.verticalValues, potValue);
-        yMovement = (value - (desiredMaxValueMovement / 2)) * 2;
+        yMovement = GetCalibrateValue(GlobalPotValues.verticalValues, potValue);
     }
 
     public static float GetValuePotSpeed(float potValue)
     {
-        return desiredMaxValueSpeed / GetCalibrateValue(GlobalPotValues.speedValues, potValue) + 1;
+        float speedPercentage = (potValue - GlobalPotValues.speedValues.minValue) / (GlobalPotValues.speedValues.maxValue - GlobalPotValues.speedValues.minValue);
+        if (speedPercentage <= 0)
+        {
+            speedPercentage = 0;
+        }
+        return desiredMaxValueSpeed * (speedPercentage + 0.25f);
     }
 
     private static float GetCalibrateValue(DifferentPotValues differentPotValues, float potValue)
@@ -35,13 +38,14 @@ public static class ArduinoValues
 
         if (tempPotValue > differentPotValues.turnoverValue)
         {
-            tempPotValue -= differentPotValues.turnoverValue - differentPotValues.minValue;
-            float tempMaxValue = differentPotValues.maxValue - differentPotValues.turnoverValue - differentPotValues.minValue;
+            tempPotValue -= differentPotValues.turnoverValue;
+            float tempMaxValue = differentPotValues.maxValue - differentPotValues.turnoverValue;
             i = tempPotValue / tempMaxValue;
         }
         else if (tempPotValue < differentPotValues.turnoverValue)
         {
             tempPotValue -= differentPotValues.minValue;
+            tempPotValue = differentPotValues.turnoverValue - tempPotValue;
             float tempTurnoverValue = differentPotValues.turnoverValue - differentPotValues.minValue;
             i = tempPotValue / tempTurnoverValue * -1f;
         }

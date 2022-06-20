@@ -20,7 +20,10 @@ public class ShowPotValue : MonoBehaviour
     {
         if (communicationManager.GetComponent<Unity_recive_data_from_Arduino>() == true)
         {
-            SetText();
+            if (communicationManager.GetComponent<Unity_recive_data_from_Arduino>().isConnected)
+            {
+                SetText();
+            }            
         }        
     }
 
