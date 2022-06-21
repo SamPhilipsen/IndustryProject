@@ -34,16 +34,16 @@ public class Calibration : MonoBehaviour
             playerPrefIndex.Add(i.ToString());
         }
 
-        allValues = GetValues();
+        allValues = PlayerPrefshandler.GetValues(playerPrefIndex);
         SetValues(allValues);
 
-        SetGlobalValues();
+        PlayerPrefshandler.SetGlobalValues(playerPrefIndex);
     }
 
     public void ChangeSliders()
     {
         PlayerPrefs.Save();
-        allValues = GetValues();
+        allValues = PlayerPrefshandler.GetValues(playerPrefIndex);
 
         SetValues(allValues);
         if (dropDownBox.GetComponent<TMP_Dropdown>().value == 0)
@@ -94,7 +94,7 @@ public class Calibration : MonoBehaviour
                 GlobalPotValues.horizontalValues.turnoverValue = turnoverValue;
                 GlobalPotValues.horizontalValues.maxValue = tempMaxValue;
             
-            SaveValues(0, horizontalSlidersList);
+            PlayerPrefshandler.SaveValues(0, horizontalSlidersList, playerPrefIndex);
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 1)
         {
@@ -106,7 +106,7 @@ public class Calibration : MonoBehaviour
                 GlobalPotValues.verticalValues.turnoverValue = turnoverValue;
                 GlobalPotValues.verticalValues.maxValue = tempMaxValue;
             
-            SaveValues(1, verticalSlidersList);
+            PlayerPrefshandler.SaveValues(1, verticalSlidersList, playerPrefIndex);
         }
         else if (dropDownBox.GetComponent<TMP_Dropdown>().value == 2)
         {
@@ -118,19 +118,9 @@ public class Calibration : MonoBehaviour
                 GlobalPotValues.speedValues.turnoverValue = turnoverValue;
                 GlobalPotValues.speedValues.maxValue = tempMaxValue;
             
-            SaveValues(2, speedSlidersList);
+            PlayerPrefshandler.SaveValues(2, speedSlidersList, playerPrefIndex);
         }
-        allValues = GetValues();
-    }
-
-    private void SetGlobalValues()
-    {
-        //horizontal
-        GlobalPotValues.horizontalValues = new DifferentPotValues(horizontalSlidersList[0].GetComponent<Slider>().value, horizontalSlidersList[1].GetComponent<Slider>().value, horizontalSlidersList[2].GetComponent<Slider>().value);
-        //vertical
-        GlobalPotValues.verticalValues = new DifferentPotValues(verticalSlidersList[0].GetComponent<Slider>().value, verticalSlidersList[1].GetComponent<Slider>().value, verticalSlidersList[2].GetComponent<Slider>().value);
-        //speed
-        GlobalPotValues.speedValues = new DifferentPotValues(speedSlidersList[0].GetComponent<Slider>().value, speedSlidersList[1].GetComponent<Slider>().value, speedSlidersList[2].GetComponent<Slider>().value);
+        allValues = PlayerPrefshandler.GetValues(playerPrefIndex);
     }
 
     private void SetValues(List<float> values)
@@ -147,54 +137,5 @@ public class Calibration : MonoBehaviour
                     speedSlidersList[0].GetComponent<Slider>().value = values[6];
                     speedSlidersList[1].GetComponent<Slider>().value = values[7];
                     speedSlidersList[2].GetComponent<Slider>().value = values[8];
-    }
-
-    private void SaveValues(int indexSliders, List<GameObject> values)
-    {        
-        int j = 0;
-        for (int i = 0 + (indexSliders * 3); i < (indexSliders + 1) * 3; i++)
-        {
-            PlayerPrefs.SetFloat(playerPrefIndex[i], values[j].GetComponent<Slider>().value);
-            j++;
-        }
-        PlayerPrefs.Save();
-
-    }
-
-    private List<float> GetValues()
-    {
-        List<float> values = new List<float>();
-        for (int i = 0; i < 9; i++)
-        {
-            float value = PlayerPrefs.GetFloat(playerPrefIndex[i], -1f);
-            values.Add(value);
-        }
-
-        for (int i = 0; i < values.Count; i++)
-        {
-            if (values[i] < 0f)
-            {
-                int index = i;
-                while (index >= 3)
-                {
-                    index -= 3;
-                }
-                switch (index)
-                {
-                    case 0:
-                        values[i] = 0f;
-                        break;
-                    case 1:
-                        values[i] = 512f;
-                        break;
-                    case 2:
-                        values[i] = 1023f;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        return values;
-    }
+    }    
 }
