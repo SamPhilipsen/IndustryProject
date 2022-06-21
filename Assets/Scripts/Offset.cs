@@ -64,8 +64,8 @@ public class Offset : MonoBehaviour
         if (!CheckCollision())
         {
             //arduino controls
-            //GetPotValues();
-            //Movement();
+            GetPotValues();
+            Movement();
             //arrow controls
             if (Input.GetKey("up") || Input.GetKey("down") || Input.GetKey("left") || Input.GetKey("right") || Input.GetKey("w") || Input.GetKey("s") || Input.GetKey("a") || Input.GetKey("d") || Input.GetKey("space"))
             {
