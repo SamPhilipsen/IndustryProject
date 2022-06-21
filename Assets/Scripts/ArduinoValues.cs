@@ -12,7 +12,8 @@ public static class ArduinoValues
 
     public static void GetvaluePotXMovement(float potValue)
     {
-        xMovement = GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
+        //float tempPotValue = (potValue - GlobalPotValues.horizontalValues.minValue) - (GlobalPotValues.horizontalValues.maxValue - GlobalPotValues.horizontalValues.minValue);
+        xMovement = -GetCalibrateValue(GlobalPotValues.horizontalValues, potValue);
     }
 
     public static void GetvaluePotYMovement(float potValue)

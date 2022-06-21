@@ -53,10 +53,10 @@ public static class PlayerPrefshandler
                         values[i] = 0f;
                         break;
                     case 7:
-                        values[i] = 60f;
+                        values[i] = 6f;
                         break;
                     case 8:
-                        values[i] = 120f;
+                        values[i] = 12f;
                         break;
                     default:
                         break;
