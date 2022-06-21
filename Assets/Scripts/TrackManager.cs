@@ -23,7 +23,7 @@ public class TrackManager : MonoBehaviour
     private bool onAltTrack;
     private int currentWaypoint;
 
-    public delegate void NearingSwitch(bool nearingSwitch, CinemachineSmoothPath path);
+    public delegate void NearingSwitch(CinemachineSmoothPath path);
     public NearingSwitch nearingSwitch;
 
     void Start()
@@ -131,7 +131,7 @@ public class TrackManager : MonoBehaviour
             if (onAltTrack)
             {
                 CheckIfCartEnd();
-                nearingSwitch(false, null);
+                nearingSwitch(null);
             }
 
             if (!onAltTrack)
@@ -146,7 +146,7 @@ public class TrackManager : MonoBehaviour
         foreach (KeyValuePair<int, CinemachineSmoothPath> collisionPoint in pathCollisionPoints)
         {
             if (currentWaypoint == collisionPoint.Key - 2)
-                nearingSwitch(true, collisionPoint.Value);
+                nearingSwitch(collisionPoint.Value);
 
             if(currentWaypoint + 1 == collisionPoint.Key)
             {

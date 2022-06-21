@@ -8,7 +8,6 @@ public class MovementCommunicator : MonoBehaviour
 {
     [SerializeField] Offset offsetScript;
     [SerializeField] TrackManager trackManager;
-    [SerializeField] Canvas canvas;
 
     private string offsetSide;
     private CinemachineSmoothPath currentPath;
@@ -16,24 +15,20 @@ public class MovementCommunicator : MonoBehaviour
     void Start()
     {
         trackManager.nearingSwitch += NearingSwitch;
-        canvas.gameObject.SetActive(false);
     }
 
-    void NearingSwitch(bool nearingSwitch, CinemachineSmoothPath path)
+    void NearingSwitch(CinemachineSmoothPath path)
     {
-        this.nearingSwitch = nearingSwitch;
+        if (path is null) return;
         this.currentPath = path;
     }
     void Update()
     {
-        if (nearingSwitch)
-        {
-            trackManager.switchingTracks = offsetSide;
+        trackManager.switchingTracks = offsetSide;
 
-            if (offsetScript.newPositionPlayer.x > 0) offsetSide = "right";
-            else if (offsetScript.newPositionPlayer.x <= 0) offsetSide = "left";
+        if (offsetScript.newPositionPlayer.x > 0) offsetSide = "right";
+        else if (offsetScript.newPositionPlayer.x <= 0) offsetSide = "left";
 
-            currentPath.GetComponent<TrackSideController>().ActivateArrow(offsetSide);
-        }
+        currentPath.GetComponent<TrackSideController>().ActivateArrow(offsetSide);
     }
 }

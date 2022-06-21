@@ -20,14 +20,18 @@ public class TrackSideController : MonoBehaviour
 
     public void ActivateArrow(string side)
     {
-        if(side.ToLower() == "left")
+        if(side is null)
         {
-            arrowLeft.GetComponent<ArrowMover>().activateArrow = true;
+            arrowLeft.GetComponent<ArrowMover>().activateArrow = false;
             arrowRight.GetComponent<ArrowMover>().activateArrow = false;
         } else if(side.ToLower() == "right")
         {
             arrowLeft.GetComponent<ArrowMover>().activateArrow = false;
             arrowRight.GetComponent<ArrowMover>().activateArrow = true;
+        } else if(side.ToLower() == "left")
+        {
+            arrowLeft.GetComponent<ArrowMover>().activateArrow = true;
+            arrowRight.GetComponent<ArrowMover>().activateArrow = false;
         }
     }
 
