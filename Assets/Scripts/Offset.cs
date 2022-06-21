@@ -295,7 +295,7 @@ public class Offset : MonoBehaviour
             newRotation.x = maxRotation;
         }
 
-        playerModel.transform.localRotation = Quaternion.RotateTowards(playerModel.transform.localRotation, Quaternion.Euler(newRotation.x, newRotation.y, newRotation.z).normalized, 1000f * Time.deltaTime);
+        playerModel.transform.localRotation = Quaternion.Slerp(playerModel.transform.localRotation, Quaternion.Euler(newRotation.x, newRotation.y, newRotation.z).normalized, 10f * Time.deltaTime);
         //Debug.Log(playerModel.transform.localRotation);
 
         //Vector3 rot = new Vector3(newRotation.x, newRotation.y, newRotation.z);
