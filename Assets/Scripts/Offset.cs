@@ -491,7 +491,8 @@ public class Offset : MonoBehaviour
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, -sphereRadius, sphereRadius)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(sphereRadius, 0, sphereRadius)), Color.red);
         Debug.DrawRay(player.transform.position, player.transform.TransformDirection(new Vector3(-sphereRadius, 0, sphereRadius)), Color.red);
-        
+
+        Debug.Log(colliding.Count); 
         if (colliding.Count > 0)
         {
             Vector3 correctionDirection = Vector3.zero;
@@ -504,6 +505,7 @@ public class Offset : MonoBehaviour
             correctionDirection.z = 0;
 
             float speed = moveSpeed.magnitude * (1 + colliding.Count / correctionSpeedMultiplier);
+            ///Debug.Log(speed);
 
             newPositionPlayer = Vector3.MoveTowards(player.transform.localPosition, player.transform.localPosition + correctionDirection, speed * Time.deltaTime);
             SetMovement();
