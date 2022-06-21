@@ -7,16 +7,16 @@ using System.Management;
 
 public class AutoDetectArduino : MonoBehaviour
 {
-    [SerializeField] string[] comPorts;
+    [SerializeField] string arduinoCom;
 
     private void Start()
     {
         AutodetectArduinoPort();
     }
 
-    private string[] AutodetectArduinoPort()
+    private void AutodetectArduinoPort()
     {
-        comPorts = SerialPort.GetPortNames();
-        return comPorts;
+        string[] comPorts = SerialPort.GetPortNames();
+        arduinoCom = comPorts[0]; 
     }
 }
