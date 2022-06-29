@@ -51,8 +51,6 @@ public class Unity_recive_data_from_Arduino : MonoBehaviour
     private void init_serial()
     {
         var isValid = SerialPort.GetPortNames().Any(x => string.Compare(x, com_port_number, true) == 0);
-        string[] comPorts = SerialPort.GetPortNames();
-        com_port_number = comPorts[0];
 
         if (!isValid)
         {
