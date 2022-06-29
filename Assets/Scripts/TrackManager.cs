@@ -131,7 +131,6 @@ public class TrackManager : MonoBehaviour
             if (onAltTrack)
             {
                 CheckIfCartEnd();
-                nearingSwitch(null);
             }
 
             if (!onAltTrack)
@@ -150,6 +149,7 @@ public class TrackManager : MonoBehaviour
 
             if(currentWaypoint + 1 == collisionPoint.Key)
             {
+                nearingSwitch(null);
                 CinemachineSmoothPath path = collisionPoint.Value;
                 if (path.GetComponent<TrackSideController>().trackSide == switchingTracks)
                     SwitchToDifferentTrack(path);

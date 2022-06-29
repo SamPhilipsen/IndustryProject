@@ -19,7 +19,6 @@ public class MovementCommunicator : MonoBehaviour
 
     void NearingSwitch(CinemachineSmoothPath path)
     {
-        if (path is null) return;
         this.currentPath = path;
     }
     void Update()
@@ -29,6 +28,7 @@ public class MovementCommunicator : MonoBehaviour
         if (offsetScript.newPositionPlayer.x > 0) offsetSide = "right";
         else if (offsetScript.newPositionPlayer.x <= 0) offsetSide = "left";
 
-        currentPath.GetComponent<TrackSideController>().ActivateArrow(offsetSide);
+        if(currentPath is not null)
+            currentPath.GetComponent<TrackSideController>().ActivateArrow(offsetSide);
     }
 }
