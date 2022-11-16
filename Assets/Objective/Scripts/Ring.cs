@@ -16,10 +16,12 @@ public class Ring : MonoBehaviour, IScore,IInteractable
     float ResetDelay = 5f;
 
     const string PlayerTag = "Player";
+    private MeshRenderer MeshRenderer;
 
     void Start()
     {
-        DefaultMaterial = GetComponent<MeshRenderer>().material;
+        MeshRenderer = GetComponent<MeshRenderer>();
+        DefaultMaterial = MeshRenderer.material;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,18 +45,30 @@ public class Ring : MonoBehaviour, IScore,IInteractable
     public void Trigger()
     {
         ScoreManager.Add(Score());
+        SwitchToClearedMaterial();
         GetComponent<AudioSource>().Play();
         SpawnParticles();
         StartCoroutine(PrepareReset());
     }
+
+    private void SwitchToDefaultMaterial()
+    {
+        MeshRenderer.material = DefaultMaterial;
+    }
+
+    private void SwitchToClearedMaterial()
+    {
+        MeshRenderer.material = ClearedMaterial;
+    }
+
     public IEnumerator PrepareReset()
     {
-            yield return new WaitForSeconds(ResetDelay);
-            Reset();
+        yield return new WaitForSeconds(ResetDelay);
+        Reset();
     }
 
     public void Reset()
     {
-        animator.Play(IdleAnimation);
+        SwitchToDefaultMaterial();
     }
 }
