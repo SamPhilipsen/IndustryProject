@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Crate : MonoBehaviour, IObjective
+public class Crate_Old : MonoBehaviour, IObjective
 {
     //[SerializeField] GameObject player;
     [SerializeField] ParticleSystem particles;

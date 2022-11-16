@@ -6,6 +6,6 @@ public class CrateAnimatorHandler : MonoBehaviour
 {
     public void DisableChild()
     {
-        GetComponentInChildren<Crate>().Disable();
+        //GetComponentInChildren<Crate>().Disable();
     }
 }
