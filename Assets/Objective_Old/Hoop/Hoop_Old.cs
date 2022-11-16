@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hoop : MonoBehaviour, IObjective
+public class Hoop_Old : MonoBehaviour, IObjective
 {
     //[SerializeField] GameObject player;
     [SerializeField] ParticleSystem particles;
