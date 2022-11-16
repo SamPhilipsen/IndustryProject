@@ -7,14 +7,14 @@ using UnityEngine;
 public class Crate : MonoBehaviour, IScore, IInteractable
 {
     [SerializeField]
-    ParticleSystem IdleParticle;
+    ParticleSystem HitParticle;
     [SerializeField]
     Animator animator;
 
     [Header("Crate Settings")]
     [Range(0, 45)]
     [SerializeField]
-    float RespawnDelay = 5f;
+    float ResetDelay = 5f;
 
     private bool Triggered = false;
 
@@ -53,17 +53,17 @@ public class Crate : MonoBehaviour, IScore, IInteractable
 
     private void SpawnParticles()
     {
-        ParticleSystem system = Instantiate(IdleParticle, gameObject.transform);
+        ParticleSystem system = Instantiate(HitParticle, gameObject.transform);
         system.Play();
-        Destroy(system, RespawnDelay);
+        Destroy(system, ResetDelay);
     }
-
+        
     public IEnumerator PrepareReset()
     {
         if (Triggered)
         {
             Triggered = false;
-            yield return new WaitForSeconds(RespawnDelay);
+            yield return new WaitForSeconds(ResetDelay);
             Reset();
         }
     }
