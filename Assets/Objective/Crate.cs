@@ -14,7 +14,7 @@ public class Crate : MonoBehaviour, IScore, IInteractable
     [Header("Crate Settings")]
     [Range(0, 45)]
     [SerializeField]
-    float RespawnDelay = 20f;
+    float RespawnDelay = 5f;
 
     private bool Triggered = false;
 
@@ -29,11 +29,10 @@ public class Crate : MonoBehaviour, IScore, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.CompareTag("Player")) // Make sure this works properly with whoever is working on Dolfy
-        //{
-        //    Trigger();
-        //}
-        Trigger();
+        if (other.CompareTag("Player")) // Make sure this works properly with whoever is working on Dolfy
+        {
+            Trigger();
+        }
     }
 
     public int Score()
@@ -49,7 +48,6 @@ public class Crate : MonoBehaviour, IScore, IInteractable
         animator.Play(CollideAnimation);
         SpawnParticles();
         GetComponent<AudioSource>().Play();
-
         StartCoroutine(PrepareReset());
     }
 
@@ -65,24 +63,13 @@ public class Crate : MonoBehaviour, IScore, IInteractable
         if (Triggered)
         {
             Triggered = false;
-            Reset();
             yield return new WaitForSeconds(RespawnDelay);
+            Reset();
         }
     }
 
     public void Reset()
     {
         animator.Play(IdleAnimation);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireCube(transform.position, new Vector3(4, 4, 4));
-    }
-
-    [ContextMenu("Trigger")]
-    void Act()
-    {
-        Trigger();
     }
 }
