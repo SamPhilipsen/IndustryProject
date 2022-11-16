@@ -56,6 +56,8 @@ public class Crate : MonoBehaviour, IScore, IInteractable
     private void SpawnParticles()
     {
         ParticleSystem system = Instantiate(IdleParticle, gameObject.transform);
+        system.Play();
+        Destroy(system, RespawnDelay);
     }
 
     public IEnumerator PrepareReset()
