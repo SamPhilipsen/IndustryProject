@@ -14,6 +14,10 @@ public class Ring : MonoBehaviour, IScore,IInteractable
     [SerializeField]
     [Range(0,45)]
     float ResetDelay = 5f;
+    [SerializeField]
+    int score = 5;
+    
+    public int Score { get { return score; }} 
 
     const string PlayerTag = "Player";
     private MeshRenderer MeshRenderer;
@@ -32,10 +36,6 @@ public class Ring : MonoBehaviour, IScore,IInteractable
         }
     }
 
-    public int Score()
-    {
-        return 5;
-    }
     private void SpawnParticles()
     {
         ParticleSystem system = Instantiate(HitParticles, gameObject.transform);
@@ -44,7 +44,7 @@ public class Ring : MonoBehaviour, IScore,IInteractable
     }
     public void Trigger()
     {
-        ScoreManager.Add(Score());
+        ScoreManager.Add(Score);
         SwitchToClearedMaterial();
         GetComponent<AudioSource>().Play();
         SpawnParticles();
