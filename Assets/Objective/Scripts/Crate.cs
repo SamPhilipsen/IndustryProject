@@ -13,6 +13,8 @@ public class Crate : MonoBehaviour, IScore, IInteractable
     [Range(0, 45)]
     [SerializeField]
     float ResetDelay = 5f;
+    [SerializeField]
+    int Score = 20;
 
     private bool Triggered = false;
     private Animator animator;
@@ -35,16 +37,12 @@ public class Crate : MonoBehaviour, IScore, IInteractable
         }
     }
 
-    public int Score()
-    {
-        return 20;
-    }
 
     public void Trigger()
     {
         Triggered = true;
 
-        ScoreManager.Add(Score());
+        ScoreManager.Add(Score);
         animator.Play(CollideAnimation);
         SpawnParticles();
         GetComponent<AudioSource>().Play();
@@ -62,8 +60,8 @@ public class Crate : MonoBehaviour, IScore, IInteractable
     {
         if (Triggered)
         {
-            Triggered = false;
             yield return new WaitForSeconds(ResetDelay);
+            Triggered = false;
             Reset();
         }
     }
