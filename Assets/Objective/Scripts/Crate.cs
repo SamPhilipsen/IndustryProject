@@ -14,7 +14,9 @@ public class Crate : MonoBehaviour, IScore, IInteractable
     [SerializeField]
     float ResetDelay = 5f;
     [SerializeField]
-    int Score = 20;
+    int score = 20;
+    
+    public int Score { get { return score; }}
 
     private bool Triggered = false;
     private Animator animator;
