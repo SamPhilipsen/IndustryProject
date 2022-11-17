@@ -4,5 +4,5 @@ using System.Collections.Generic;
 
 public interface IScore
 {
-    public int Score();
+    public int Score { get; }
 }
