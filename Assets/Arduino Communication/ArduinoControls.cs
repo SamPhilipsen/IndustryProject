@@ -23,6 +23,9 @@ public class ArduinoControls : MonoBehaviour
     [SerializeField]
     public string[] Message;
 
+    [SerializeField]
+    public int Speed, HorizontalTilt, VerticalTilt;
+
     private string inboundMessage;
 
     public void Start()
@@ -32,6 +35,11 @@ public class ArduinoControls : MonoBehaviour
         serialPort = new SerialPort(ports[0]);
         serialPort.BaudRate = baudRate;
         Connect();
+
+        if (serialPort.IsOpen == false)
+        {
+            //SEND HELP
+        }
     }
 
     public void OnDestroy()
@@ -43,12 +51,15 @@ public class ArduinoControls : MonoBehaviour
     {
         if (ReadMessage())
         {
-            foreach (string item in Message)
-            {
-                Debug.Log($"Message: {item} \n");
-            }
+            ProcessMessage();
         }
     }
+
+    private void ProcessMessage()
+    {
+
+    }   
+
 
     /// <summary>
     /// Connects to the serial port.
@@ -106,29 +117,40 @@ public class ArduinoControls : MonoBehaviour
     {
         if (serialPort.IsOpen == true && serialPort.BytesToRead > 0)
         {
-            string readMessage = serialPort.ReadExisting();
-
-            if(readMessage.Contains(EndMarker))
+            try
             {
-                inboundMessage += readMessage;
-                int endIndex = inboundMessage.IndexOf(EndMarker);
-                int startIndex = inboundMessage.IndexOf(StartMarker);
+                string readMessage = serialPort.ReadExisting();
 
-                //Technically unsafe, but due to the order its FINE.
-                inboundMessage = inboundMessage.Remove(endIndex);
-                inboundMessage = inboundMessage.Remove(startIndex,1);
-                inboundMessage = inboundMessage.Trim();
+                if (readMessage.Contains(EndMarker))
+                {
+                    inboundMessage += readMessage;
+                    int endIndex = inboundMessage.IndexOf(EndMarker);
+                    int startIndex = inboundMessage.IndexOf(StartMarker);
 
-                Debug.Log($"Inbound: {inboundMessage}");
+                    if (startIndex == -1 || endIndex == -1)
+                    {
+                        inboundMessage = "";
+                        return false;
+                    }
 
-                Message = inboundMessage.Split(messageCreator.PayloadMarker);
-                inboundMessage = "";
+                    //Technically unsafe, but due to the order its FINE.
+                    inboundMessage = inboundMessage.Remove(endIndex);
+                    inboundMessage = inboundMessage.Remove(startIndex, 1);
+                    inboundMessage = inboundMessage.Trim();
+                    Message = inboundMessage.Split(PayloadMarker, StringSplitOptions.RemoveEmptyEntries);
+                    inboundMessage = "";
+                }
+                else
+                {
+                    inboundMessage += readMessage;
+                }
+                return true;
+
             }
-            else
+            catch (IndexOutOfRangeException ex)
             {
-                inboundMessage += readMessage;
+                return false;
             }
-            return true;
         }
         return false;
     }
