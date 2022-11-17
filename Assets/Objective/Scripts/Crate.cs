@@ -8,8 +8,6 @@ public class Crate : MonoBehaviour, IScore, IInteractable
 {
     [SerializeField]
     ParticleSystem HitParticle;
-    [SerializeField]
-    Animator animator;
 
     [Header("Crate Settings")]
     [Range(0, 45)]
@@ -17,9 +15,11 @@ public class Crate : MonoBehaviour, IScore, IInteractable
     float ResetDelay = 5f;
 
     private bool Triggered = false;
+    private Animator animator;
 
     private const string IdleAnimation = "Idle";
     private const string CollideAnimation = "Collect";
+    
 
     private void Start()
     {
