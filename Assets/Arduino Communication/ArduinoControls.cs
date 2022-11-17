@@ -106,31 +106,31 @@ public class ArduinoControls : MonoBehaviour
     /// </summary>
     /// <param name="valueToCheck">What to check for in the device description.</param>
     /// <returns>The COM port containing the right value, or null if none are found.</returns>
-    public string CheckCOMPort(string valueToCheck)
-    {
-        ManagementScope managementScope = new ManagementScope();
-        SelectQuery query = new SelectQuery("Select * from Win32_SerialPort");
-        ManagementObjectSearcher managmentObjectSearcher = new ManagementObjectSearcher(managementScope, query);
+    //public string CheckCOMPort(string valueToCheck)
+    //{
+    //    ManagementScope managementScope = new ManagementScope();
+    //    SelectQuery query = new SelectQuery("Select * from Win32_SerialPort");
+    //    ManagementObjectSearcher managmentObjectSearcher = new ManagementObjectSearcher(managementScope, query);
 
-        try
-        {
-            foreach (ManagementObject managementObject in managmentObjectSearcher.Get())
-            {
-                string description = managementObject["Description"].ToString();
-                string deviceID = managementObject["DeviceID"].ToString();
-                if (description.Contains(valueToCheck))
-                {
-                    return deviceID;
-                }
-            }
-        }
-        catch (ManagementException exception)
-        {
-            MessageBox.Show(exception.Message);
-        }
+    //    try
+    //    {
+    //        foreach (ManagementObject managementObject in managmentObjectSearcher.Get())
+    //        {
+    //            string description = managementObject["Description"].ToString();
+    //            string deviceID = managementObject["DeviceID"].ToString();
+    //            if (description.Contains(valueToCheck))
+    //            {
+    //                return deviceID;
+    //            }
+    //        }
+    //    }
+    //    catch (ManagementException exception)
+    //    {
+    //        MessageBox.Show(exception.Message);
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
     /// <summary>
     /// 
