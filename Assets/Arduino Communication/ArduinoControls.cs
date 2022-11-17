@@ -10,19 +10,44 @@ using static UnityEngine.Rendering.DebugUI;
 public class ArduinoControls : MonoBehaviour
 {
     [SerializeField]
-    public int baudRate { get; private set; }
+    private int baudRate = 9600;
     [SerializeField]
-    char StartMarker;
+    char StartMarker = '@';
     [SerializeField]
-    char EndMarker;
+    char EndMarker = '#';
+    [SerializeField]
+    char PayloadMarker = ':';
     private SerialPort serialPort { get; set; }
     private MessageCreator messageCreator;
-    public string readMessage { get; private set; }
-    public string[] MessageByPayload { get; private set; }
+
+    [SerializeField]
+    public string[] Message;
+
+    private string inboundMessage;
 
     public void Start()
     {
         messageCreator = new MessageCreator(StartMarker,EndMarker);
+        string[] ports = GetPorts();
+        serialPort = new SerialPort(ports[0]);
+        serialPort.BaudRate = baudRate;
+        Connect();
+    }
+
+    public void OnDestroy()
+    {
+        Disconnect();
+    }
+
+    private void Update()
+    {
+        if (ReadMessage())
+        {
+            foreach (string item in Message)
+            {
+                Debug.Log($"Message: {item} \n");
+            }
+        }
     }
 
     /// <summary>
@@ -61,7 +86,7 @@ public class ArduinoControls : MonoBehaviour
     /// </summary>
     /// <param name="message">The message that will be sent.</param>
     /// <returns>Whether it was successful.</returns>
-    public bool SendMessage(string message)
+    public new bool SendMessage(string message)
     {
         if (serialPort.IsOpen == true)
         {
@@ -82,11 +107,27 @@ public class ArduinoControls : MonoBehaviour
         if (serialPort.IsOpen == true && serialPort.BytesToRead > 0)
         {
             string readMessage = serialPort.ReadExisting();
-            if (string.IsNullOrEmpty(readMessage) || string.IsNullOrWhiteSpace(readMessage)) return false;
 
-            readMessage = readMessage.Remove(readMessage.IndexOf(messageCreator.EndMarker));
-            readMessage = readMessage.Substring(1);
-            MessageByPayload = readMessage.Split(messageCreator.PayloadMarker);
+            if(readMessage.Contains(EndMarker))
+            {
+                inboundMessage += readMessage;
+                int endIndex = inboundMessage.IndexOf(EndMarker);
+                int startIndex = inboundMessage.IndexOf(StartMarker);
+
+                //Technically unsafe, but due to the order its FINE.
+                inboundMessage = inboundMessage.Remove(endIndex);
+                inboundMessage = inboundMessage.Remove(startIndex,1);
+                inboundMessage = inboundMessage.Trim();
+
+                Debug.Log($"Inbound: {inboundMessage}");
+
+                Message = inboundMessage.Split(messageCreator.PayloadMarker);
+                inboundMessage = "";
+            }
+            else
+            {
+                inboundMessage += readMessage;
+            }
             return true;
         }
         return false;
