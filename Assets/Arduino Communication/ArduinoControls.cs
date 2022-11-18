@@ -55,9 +55,37 @@ public class ArduinoControls : MonoBehaviour
         }
     }
 
+    enum CommandStructure
+    {
+        Identifier = 0,
+        Payload = 1
+    }
+
     private void ProcessMessage()
     {
-
+        if (Int32.TryParse(Message[(int)CommandStructure.Payload], out int payload))
+        {
+            switch (Message[(int)CommandStructure.Identifier])
+            {
+                case "HRZ":
+                    {
+                        HorizontalTilt = payload;
+                        break;
+                    }
+                case "VER":
+                    {
+                        VerticalTilt = payload;
+                        break;
+                    }
+                case "SPD":
+                    {
+                        Speed = payload;
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
     }   
 
 
@@ -147,7 +175,7 @@ public class ArduinoControls : MonoBehaviour
                 return true;
 
             }
-            catch (IndexOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException ex)
             {
                 return false;
             }
