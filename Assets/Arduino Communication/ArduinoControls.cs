@@ -3,12 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
-
-
-public class ArduinoControls : MonoBehaviour
+public class ArduinoControls : MonoBehaviour, IArduinoData
 {
     [SerializeField]
     private int baudRate = 9600;
@@ -19,15 +16,22 @@ public class ArduinoControls : MonoBehaviour
     [SerializeField]
     char PayloadMarker = ':';
     private SerialPort serialPort { get; set; }
+
     private MessageCreator messageCreator;
 
     [SerializeField]
     private string[] Message;
 
-    Dictionary<string,int> keyValuePairs = new Dictionary<string,int>();
-    int HorizontalTilt, VerticalTilt, Speed;
+    public Dictionary<string, int> keyValuePairs = new Dictionary<string, int>();
+    int HorizontalTilt, VerticalTilt, Rotations;
 
     private string inboundMessage;
+
+    int IArduinoData.Roll { get { return keyValuePairs["HRZ"]; } }
+
+    int IArduinoData.Pitch { get { return keyValuePairs["VER"]; } }
+
+    int IArduinoData.Speed { get { return keyValuePairs["SPD"]; } }
 
     public void Start()
     {
@@ -60,7 +64,7 @@ public class ArduinoControls : MonoBehaviour
     {
         keyValuePairs.Add("HRZ", HorizontalTilt);
         keyValuePairs.Add("VER", VerticalTilt);
-        keyValuePairs.Add("SPD", Speed);
+        keyValuePairs.Add("SPD", Rotations);
     }
     enum CommandStructure
     {
