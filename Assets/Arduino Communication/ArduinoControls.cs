@@ -54,8 +54,6 @@ public class ArduinoControls : MonoBehaviour
         {
             ProcessMessage();
         }
-
-        
     }
 
     private void PrepareCommands()
