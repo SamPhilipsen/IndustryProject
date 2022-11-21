@@ -3,9 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
-using Unity.VisualScripting;
+using UnityEditor.Build.Content;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
+
+
 
 public class ArduinoControls : MonoBehaviour
 {
@@ -23,8 +24,8 @@ public class ArduinoControls : MonoBehaviour
     [SerializeField]
     private string[] Message;
 
-    [SerializeField]
-    public int Speed, HorizontalTilt, VerticalTilt;
+    Dictionary<string,int> keyValuePairs = new Dictionary<string,int>();
+    int HorizontalTilt, VerticalTilt, Speed;
 
     private string inboundMessage;
 
@@ -32,6 +33,8 @@ public class ArduinoControls : MonoBehaviour
     {
         messageCreator = new MessageCreator(StartMarker,EndMarker);
         serialPort.BaudRate = baudRate;
+
+        PrepareCommands();
         Connect();
 
         if (serialPort.IsOpen == false)
@@ -51,8 +54,16 @@ public class ArduinoControls : MonoBehaviour
         {
             ProcessMessage();
         }
+
+        
     }
 
+    private void PrepareCommands()
+    {
+        keyValuePairs.Add("HRZ", HorizontalTilt);
+        keyValuePairs.Add("VER", VerticalTilt);
+        keyValuePairs.Add("SPD", Speed);
+    }
     enum CommandStructure
     {
         Identifier = 0,
@@ -63,26 +74,7 @@ public class ArduinoControls : MonoBehaviour
     {
         if (Int32.TryParse(Message[(int)CommandStructure.Payload], out int payload))
         {
-            switch (Message[(int)CommandStructure.Identifier])
-            {
-                case "HRZ":
-                    {
-                        HorizontalTilt = payload;
-                        break;
-                    }
-                case "VER":
-                    {
-                        VerticalTilt = payload;
-                        break;
-                    }
-                case "SPD":
-                    {
-                        Speed = payload;
-                        break;
-                    }
-                default:
-                    break;
-            }
+            keyValuePairs[Message[(int)CommandStructure.Identifier]] = payload;
         }
     }   
 
@@ -184,37 +176,6 @@ public class ArduinoControls : MonoBehaviour
     {
         return SerialPort.GetPortNames();
     }
-
-    /// <summary>
-    /// A method to check if the COM device's description contains the desired value.
-    /// </summary>
-    /// <param name="valueToCheck">What to check for in the device description.</param>
-    /// <returns>The COM port containing the right value, or null if none are found.</returns>
-    //public string CheckCOMPort(string valueToCheck)
-    //{
-    //    ManagementScope managementScope = new ManagementScope();
-    //    SelectQuery query = new SelectQuery("Select * from Win32_SerialPort");
-    //    ManagementObjectSearcher managmentObjectSearcher = new ManagementObjectSearcher(managementScope, query);
-
-    //    try
-    //    {
-    //        foreach (ManagementObject managementObject in managmentObjectSearcher.Get())
-    //        {
-    //            string description = managementObject["Description"].ToString();
-    //            string deviceID = managementObject["DeviceID"].ToString();
-    //            if (description.Contains(valueToCheck))
-    //            {
-    //                return deviceID;
-    //            }
-    //        }
-    //    }
-    //    catch (ManagementException exception)
-    //    {
-    //        MessageBox.Show(exception.Message);
-    //    }
-
-    //    return null;
-    //}
 
     /// <summary>
     /// 
