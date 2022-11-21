@@ -237,4 +237,10 @@ public class ArduinoControls : MonoBehaviour
         serialPort.PortName = portName;
         return true;
     }
+
+    public bool isConnected()
+    {
+        if (serialPort == null) return false;
+        else return serialPort.IsOpen;
+    }
 }
