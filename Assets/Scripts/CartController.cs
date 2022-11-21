@@ -23,10 +23,13 @@ public class CartController : MonoBehaviour
     {
         if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
         {
+            //set current direction the player is moving towards
             TrackSide direction = ProcessInput();
+
+            //switch to an alternative track if there is one available in the direction the player is moving
             foreach (var altTrack in altTracks)
             {
-                if (CheckTrackSwitchable(altTrack) && cart.m_Path == altTrack.trackToSwitchFrom && altTrack.unlocked && direction == altTrack.trackSide)
+                if (CheckTrackSwitchable(altTrack, direction))
                 {
                     cart.m_Path = altTrack.track;
                     cart.m_Position = 0f;
@@ -35,14 +38,20 @@ public class CartController : MonoBehaviour
                 }
             }
         }
+
+        //set the speed of the cart
         if (Input.GetButton("Jump")) cart.m_Speed = baseSpeed * boostModifier;
         else cart.m_Speed = baseSpeed;
+
+        //check if the player is at the end of a sidetrack
         if (cart.m_Path != mainTrack && cart.m_Position == currentSideTrack.track.PathLength)
         {
+            //set followed path & position
             cart.m_Path = currentSideTrack.trackToSwitchBackTo;
             cart.m_Position = currentSideTrack.transferBackPos;
             if (cart.m_Path != mainTrack)
             {
+                //set currentSideTrack to the new track
                 foreach (var altTrack in altTracks)
                 {
                     if (altTrack.track == cart.m_Path)
@@ -62,10 +71,15 @@ public class CartController : MonoBehaviour
         return TrackSide.down;
     }
 
-    bool CheckTrackSwitchable(SideTrack sideTrack)
+    //check if you can switch to the chosen sidetrack whilst moving in a given direction
+    bool CheckTrackSwitchable(SideTrack sideTrack, TrackSide movementDirection)
     {
         float transferMinPos = sideTrack.transferToPos - cart.m_Speed / trackSwitchSafety;
-        if (cart.m_Position >= transferMinPos && cart.m_Position <= sideTrack.transferToPos) return true;
+        if (cart.m_Position >= transferMinPos && cart.m_Position <= sideTrack.transferToPos &&
+            cart.m_Path == sideTrack.trackToSwitchFrom &&
+            sideTrack.unlocked &&
+            movementDirection == sideTrack.trackSide)
+            return true;
         return false;
     }
 }
