@@ -7,41 +7,36 @@ public class CartController : MonoBehaviour
 {
     CinemachineDollyCart cart;
     float baseSpeed;
-    [SerializeField] float boostModifier = 2.5f;
+    private float boostModifier;
     [SerializeField] float trackSwitchSafety = 100f;
     [SerializeField] CinemachinePath mainTrack;
     [SerializeField] List<SideTrack> altTracks;
     private SideTrack currentSideTrack;
+    private TrackSide cartDirection;
 
     void Start()
     {
         cart = GetComponent<CinemachineDollyCart>();
         baseSpeed = cart.m_Speed;
+        boostModifier = 1f;
     }
 
     void Update()
     {
-        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+        //switch to an alternative track if there is one available in the direction the player is moving
+        foreach (var altTrack in altTracks)
         {
-            //set current direction the player is moving towards
-            TrackSide direction = ProcessInput();
-
-            //switch to an alternative track if there is one available in the direction the player is moving
-            foreach (var altTrack in altTracks)
+            if (CheckTrackSwitchable(altTrack, cartDirection))
             {
-                if (CheckTrackSwitchable(altTrack, direction))
-                {
-                    cart.m_Path = altTrack.track;
-                    cart.m_Position = 0f;
-                    currentSideTrack = altTrack;
-                    break;
-                }
+                cart.m_Path = altTrack.track;
+                cart.m_Position = 0f;
+                currentSideTrack = altTrack;
+                break;
             }
         }
 
         //set the speed of the cart
-        if (Input.GetButton("Jump")) cart.m_Speed = baseSpeed * boostModifier;
-        else cart.m_Speed = baseSpeed;
+        cart.m_Speed = baseSpeed * boostModifier;
 
         //check if the player is at the end of a sidetrack
         if (cart.m_Path != mainTrack && cart.m_Position == currentSideTrack.track.PathLength)
@@ -63,12 +58,16 @@ public class CartController : MonoBehaviour
         }
     }
 
-    TrackSide ProcessInput()
+    //function to set the direction the cart is going
+    public void SetDirection(TrackSide newCartdirection)
     {
-        if (Input.GetAxis("Horizontal") > 0) return TrackSide.right;
-        if (Input.GetAxis("Horizontal") < 0) return TrackSide.left;
-        if (Input.GetAxis("Vertical") > 0) return TrackSide.up;
-        return TrackSide.down;
+        cartDirection = newCartdirection;
+    }
+
+    //function to set the boost modifier
+    public void SetBoostModifier(float newBoostModifier)
+    {
+        boostModifier = newBoostModifier;
     }
 
     //check if you can switch to the chosen sidetrack whilst moving in a given direction
