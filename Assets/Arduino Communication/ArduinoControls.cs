@@ -21,7 +21,7 @@ public class ArduinoControls : MonoBehaviour
     private MessageCreator messageCreator;
 
     [SerializeField]
-    public string[] Message;
+    private string[] Message;
 
     [SerializeField]
     public int Speed, HorizontalTilt, VerticalTilt;
@@ -31,14 +31,12 @@ public class ArduinoControls : MonoBehaviour
     public void Start()
     {
         messageCreator = new MessageCreator(StartMarker,EndMarker);
-        string[] ports = GetPorts();
-        serialPort = new SerialPort(ports[0]);
         serialPort.BaudRate = baudRate;
         Connect();
 
         if (serialPort.IsOpen == false)
         {
-            //SEND HELP
+            throw new Exception("Hardware could not connect!");
         }
     }
 
@@ -96,6 +94,9 @@ public class ArduinoControls : MonoBehaviour
     {
         if (serialPort.IsOpen == false)
         {
+            string[] ports = GetPorts();
+            serialPort = new SerialPort(ports[0]);
+
             serialPort.Open();
             if (serialPort.IsOpen)
             {
@@ -145,40 +146,32 @@ public class ArduinoControls : MonoBehaviour
     {
         if (serialPort.IsOpen == true && serialPort.BytesToRead > 0)
         {
-            try
+            string readMessage = serialPort.ReadExisting();
+
+            if (readMessage.Contains(EndMarker))
             {
-                string readMessage = serialPort.ReadExisting();
+                inboundMessage += readMessage;
+                int endIndex = inboundMessage.IndexOf(EndMarker);
+                int startIndex = inboundMessage.IndexOf(StartMarker);
 
-                if (readMessage.Contains(EndMarker))
+                if (startIndex == -1 || endIndex == -1)
                 {
-                    inboundMessage += readMessage;
-                    int endIndex = inboundMessage.IndexOf(EndMarker);
-                    int startIndex = inboundMessage.IndexOf(StartMarker);
-
-                    if (startIndex == -1 || endIndex == -1)
-                    {
-                        inboundMessage = "";
-                        return false;
-                    }
-
-                    //Technically unsafe, but due to the order its FINE.
-                    inboundMessage = inboundMessage.Remove(endIndex);
-                    inboundMessage = inboundMessage.Remove(startIndex, 1);
-                    inboundMessage = inboundMessage.Trim();
-                    Message = inboundMessage.Split(PayloadMarker, StringSplitOptions.RemoveEmptyEntries);
                     inboundMessage = "";
+                    return false;
                 }
-                else
-                {
-                    inboundMessage += readMessage;
-                }
-                return true;
 
+                //Technically unsafe, but due to the order its FINE.
+                inboundMessage = inboundMessage.Remove(endIndex);
+                inboundMessage = inboundMessage.Remove(startIndex, 1);
+                inboundMessage = inboundMessage.Trim();
+                Message = inboundMessage.Split(PayloadMarker, StringSplitOptions.RemoveEmptyEntries);
+                inboundMessage = "";
             }
-            catch (ArgumentOutOfRangeException ex)
+            else
             {
-                return false;
+                inboundMessage += readMessage;
             }
+            return true;
         }
         return false;
     }
