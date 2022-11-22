@@ -27,14 +27,16 @@ public class ArduinoControls : MonoBehaviour, IArduinoData
 
     private string inboundMessage;
 
-    int IArduinoData.Roll { get { return keyValuePairs["HRZ"]; } }
+    public int Roll { get { return keyValuePairs["HRZ"]; } }
 
-    int IArduinoData.Pitch { get { return keyValuePairs["VER"]; } }
+    public int Pitch { get { return keyValuePairs["VER"]; } }
 
-    int IArduinoData.Speed { get { return keyValuePairs["SPD"]; } }
+    public int Speed { get { return keyValuePairs["SPD"]; } }
 
     public void Start()
     {
+        string[] ports = GetPorts();
+        serialPort = new SerialPort(ports[0]);
         messageCreator = new MessageCreator(StartMarker,EndMarker);
         serialPort.BaudRate = baudRate;
 
@@ -142,30 +144,42 @@ public class ArduinoControls : MonoBehaviour, IArduinoData
         {
             string readMessage = serialPort.ReadExisting();
 
-            if (readMessage.Contains(EndMarker))
+            try
             {
-                inboundMessage += readMessage;
-                int endIndex = inboundMessage.IndexOf(EndMarker);
-                int startIndex = inboundMessage.IndexOf(StartMarker);
-
-                if (startIndex == -1 || endIndex == -1)
+                if (readMessage.Contains(EndMarker))
                 {
-                    inboundMessage = "";
-                    return false;
-                }
+                    inboundMessage += readMessage;
+                    int endIndex = inboundMessage.IndexOf(EndMarker);
+                    int startIndex = inboundMessage.IndexOf(StartMarker);
 
-                //Technically unsafe, but due to the order its FINE.
-                inboundMessage = inboundMessage.Remove(endIndex);
-                inboundMessage = inboundMessage.Remove(startIndex, 1);
-                inboundMessage = inboundMessage.Trim();
-                Message = inboundMessage.Split(PayloadMarker, StringSplitOptions.RemoveEmptyEntries);
-                inboundMessage = "";
+                    if (startIndex == -1 || endIndex == -1 || startIndex == inboundMessage.Length - 1)
+                    {
+                        inboundMessage = "";
+                        return false;
+                    }
+
+                    //Technically unsafe, but due to the order its FINE.
+                    inboundMessage = inboundMessage.Remove(endIndex);
+
+                    if (1 > inboundMessage.Length - startIndex)
+                    {
+                        return false;
+                    }
+
+                    inboundMessage = inboundMessage.Remove(startIndex, 1);
+                    inboundMessage = inboundMessage.Trim();
+                    Message = inboundMessage.Split(PayloadMarker, StringSplitOptions.RemoveEmptyEntries);
+                    inboundMessage = "";
+                }
+                else
+                {
+                    inboundMessage += readMessage;
+                }
+                return true;
             }
-            else
+            catch (ArgumentOutOfRangeException ex)
             {
-                inboundMessage += readMessage;
             }
-            return true;
         }
         return false;
     }
